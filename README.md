@@ -1,14 +1,16 @@
 # Time Loop Godot Demo
 
-A minimal Godot 4 C# 3D game demo about a disordered time loop, intervention, regret, and acceptance.
+A minimal Godot 4 C# 2D game demo about a disordered time loop, intervention, regret, and acceptance.
 
 ## Project overview
 
 The demo is built with Godot's scene tree plus C# runtime scene generation. The main scene is intentionally lightweight:
 
-- `scenes/Main.tscn` contains the root node.
-- `scripts/GameController.cs` procedurally creates the apartment and subway platform scenes at runtime.
+- `scenes/Main.tscn` contains the root `Node2D`.
+- `scripts/GameController.cs` procedurally creates 2D apartment and subway platform blockout scenes at runtime.
 - `scripts/TimeManager.cs` is created by `GameController` at runtime and stores the current time phase, loop count, memory log, and cross-time object states.
+
+The story flow remains the same as the original prototype. The 2D scene graph can now be refined from the provided scene graph/design reference.
 
 ## Requirements
 
