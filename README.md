@@ -8,7 +8,7 @@ The demo is built with Godot's scene tree plus C# runtime scene generation. The 
 
 - `scenes/Main.tscn` contains the root node.
 - `scripts/GameController.cs` procedurally creates the apartment and subway platform scenes at runtime.
-- `scripts/TimeManager.cs` is registered as an Autoload singleton and stores the current time phase, loop count, memory log, and cross-time object states.
+- `scripts/TimeManager.cs` is created by `GameController` at runtime and stores the current time phase, loop count, memory log, and cross-time object states.
 
 ## Requirements
 

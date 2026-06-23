@@ -20,9 +20,13 @@ public partial class TimeManager : Node
 	public Dictionary<string, bool> ObjectStates { get; } = new();
 	public List<string> MemoryLog { get; } = new();
 
-	public override void _Ready()
+	public override void _EnterTree()
 	{
 		Instance = this;
+	}
+
+	public override void _Ready()
+	{
 		EnsureDefaultStates();
 	}
 
