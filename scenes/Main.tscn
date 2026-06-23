@@ -1,9 +1,17 @@
-[gd_scene load_steps=10 format=3 uid="uid://dnqx11r70k271"]
+[gd_scene load_steps=13 format=3 uid="uid://dnqx11r70k271"]
 
 [ext_resource type="Script" path="res://scripts/GameController.cs" id="1_gamecontroller"]
 [ext_resource type="Script" path="res://scripts/TimeStateManager.cs" id="2_timestate"]
 [ext_resource type="Script" path="res://scripts/TemporalProp.cs" id="3_temporalprop"]
 [ext_resource type="Script" path="res://scripts/PlayerCharacter.cs" id="4_player"]
+[ext_resource type="Texture2D" path="res://assets/characters/player/spritesheets/b28402b6556d48cfed87006d59b2ddc.png" id="5_player_stand"]
+[ext_resource type="Shader" path="res://assets/shaders/chroma_key/chroma_key_green.gdshader" id="6_chroma_key"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_player_chroma_key"]
+shader = ExtResource("6_chroma_key")
+shader_parameter/key_color = Color(0, 1, 0, 1)
+shader_parameter/threshold = 0.35
+shader_parameter/softness = 0.08
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_prop"]
 size = Vector2(96, 64)
@@ -198,8 +206,13 @@ position = Vector2(610, 560)
 script = ExtResource("4_player")
 
 [node name="Sprite2D" type="Sprite2D" parent="MainStage/Player_Character"]
+material = SubResource("ShaderMaterial_player_chroma_key")
+texture = ExtResource("5_player_stand")
+scale = Vector2(0.32, 0.32)
+offset = Vector2(0, -190)
 
 [node name="BodyMarker" type="Polygon2D" parent="MainStage/Player_Character"]
+visible = false
 polygon = PackedVector2Array(-16, -24, 16, -24, 16, 24, -16, 24)
 color = Color(0.78, 0.82, 0.86, 1)
 

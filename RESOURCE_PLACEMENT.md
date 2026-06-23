@@ -7,6 +7,9 @@ Use these folders for the final art, animation, shader, and audio resources. The
 - `assets/characters/player/spritesheets/`
   - Put the 4-direction player SpriteSheet textures here.
   - Scene node: `Root/MainStage/Player_Character/Sprite2D`
+  - Current standing image: `b28402b6556d48cfed87006d59b2ddc.png`
+  - Current Sprite2D settings: `scale = (0.32, 0.32)`, `offset = (0, -190)`.
+  - Because the current image uses a green background, it is using the chroma-key shader at `assets/shaders/chroma_key/chroma_key_green.gdshader`.
 
 - `assets/characters/player/animations/idle/`
   - Idle breathing/trembling frames or animation data.
@@ -81,6 +84,11 @@ Use these folders for the final art, animation, shader, and audio resources. The
 - `assets/shaders/vignette/`
   - Put the inspection vignette shader here.
   - Attach it as a `ShaderMaterial` to `Root/UILayer/InspectionOverlay`.
+
+- `assets/shaders/chroma_key/`
+  - Put green-screen removal shaders here.
+  - Current shader: `chroma_key_green.gdshader`.
+  - Attached to `Root/MainStage/Player_Character/Sprite2D` while the standing image still has a green background.
 
 ## Audio resources
 
