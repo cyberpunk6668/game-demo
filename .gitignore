@@ -1,0 +1,40 @@
+# Godot 4+ generated/editor cache
+.godot/
+.mono/
+mono_crash.*.json
+
+# Godot local/export output
+/android/
+/builds/
+/exports/
+export.cfg
+export_credentials.cfg
+*.apk
+*.aab
+*.pck
+*.zip
+*.exe
+*.app
+
+# .NET / C# build output
+bin/
+obj/
+**/bin/
+**/obj/
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IDE/editor local files
+.vs/
+.idea/
+*.swp
+*.tmp
+*.temp
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
