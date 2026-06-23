@@ -4,13 +4,15 @@ A minimal Godot 4 C# 2D game demo about a disordered time loop, intervention, re
 
 ## Project overview
 
-The demo is built with Godot's scene tree plus C# runtime scene generation. The main scene is intentionally lightweight:
+The demo is built as a Godot 4 C# 2D top-down prototype based on `../design.md`:
 
-- `scenes/Main.tscn` contains the root `Node2D`.
-- `scripts/GameController.cs` procedurally creates 2D apartment and subway platform blockout scenes at runtime.
-- `scripts/TimeManager.cs` is created by `GameController` at runtime and stores the current time phase, loop count, memory log, and cross-time object states.
+- `scenes/Main.tscn` contains the full gameplay tree: `Root`, `TimeStateManager`, `MainStage`, `Dynamic_Props`, `Light_System`, `Player_Character`, and `UILayer`.
+- `scripts/GameController.cs` coordinates interaction prompts, inspection overlay, calendar matrix, glitch/whiteout transitions, and room blockout visuals.
+- `scripts/TimeStateManager.cs` manages hidden time states: Day -3, Day 0, and Day +7.
+- `scripts/TemporalProp.cs` powers date-dependent inspectable props such as the diary, recorder, pill bottle, and calendar.
+- `scripts/PlayerCharacter.cs` handles top-down movement and hooks for Idle/Walk/Interact/Breakdown animations.
 
-The story flow remains the same as the original prototype. The 2D scene graph can now be refined from the provided scene graph/design reference.
+The story flow remains the same as the original prototype. See `RESOURCE_PLACEMENT.md` for the exact folders and scene nodes where art, transition animation, shader, and audio resources should be placed.
 
 ## Requirements
 
