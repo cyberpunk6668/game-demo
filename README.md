@@ -49,6 +49,19 @@ Generated editor caches and build outputs are ignored, including:
 - `obj/`
 - export builds such as `.apk`, `.aab`, `.pck`, `.exe`, `.zip`
 
+## Publishing to GitHub
+
+This project is already initialized as a local Git repository on the `main` branch.
+
+To publish it to GitHub:
+
+1. Create an empty GitHub repository in your GitHub account or organization.
+2. Copy the repository URL.
+3. Add that URL as the `origin` remote.
+4. Push the local `main` branch.
+
+Avoid committing Godot editor caches or build outputs. The included `.gitignore` is designed to keep those generated files out of the repository.
+
 ## Current playable flow
 
 1. Opening apartment scene
