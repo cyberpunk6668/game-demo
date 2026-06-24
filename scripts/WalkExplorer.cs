@@ -7,9 +7,12 @@ public partial class WalkExplorer : CharacterBody3D
 	[Export] public float JumpVelocity { get; set; } = 4.3f;
 	[Export] public float FlySpeed { get; set; } = 7.0f;
 	[Export] public float FlyFastSpeed { get; set; } = 16.0f;
-	[Export] public Vector3 CameraOffset { get; set; } = new(5.8f, 6.2f, 7.2f);
+	[Export] public bool FixedRoomCamera { get; set; } = true;
+	[Export] public Vector3 RoomViewCenter { get; set; } = new(0.9f, 0.75f, -0.45f);
+	[Export] public Vector3 CameraOffset { get; set; } = new(0.0f, 10.5f, 6.0f);
 	[Export] public Vector3 CameraLookAtOffset { get; set; } = new(0.0f, 0.85f, -0.25f);
 	[Export] public float CameraFollowSpeed { get; set; } = 8.0f;
+	[Export] public float OrthographicSize { get; set; } = 8.4f;
 
 	private Node3D _head = null!;
 	private Camera3D _camera = null!;
@@ -24,7 +27,8 @@ public partial class WalkExplorer : CharacterBody3D
 
 		_camera.Current = true;
 		_camera.TopLevel = true;
-		_camera.Fov = 48.0f;
+		_camera.Set("projection", 1);
+		_camera.Set("size", OrthographicSize);
 		Input.MouseMode = Input.MouseModeEnum.Visible;
 		UpdateCameraImmediate();
 		UpdateModeLabel();
@@ -152,18 +156,23 @@ public partial class WalkExplorer : CharacterBody3D
 
 	private void UpdateCameraImmediate()
 	{
-		Vector3 target = GlobalPosition + CameraLookAtOffset;
+		Vector3 target = GetCameraTarget();
 		_camera.GlobalPosition = target + CameraOffset;
 		_camera.LookAt(target, Vector3.Up);
 	}
 
 	private void UpdateCamera(float delta)
 	{
-		Vector3 target = GlobalPosition + CameraLookAtOffset;
+		Vector3 target = GetCameraTarget();
 		Vector3 desiredPosition = target + CameraOffset;
 		float weight = 1.0f - Mathf.Exp(-CameraFollowSpeed * delta);
 		_camera.GlobalPosition = _camera.GlobalPosition.Lerp(desiredPosition, weight);
 		_camera.LookAt(target, Vector3.Up);
+	}
+
+	private Vector3 GetCameraTarget()
+	{
+		return FixedRoomCamera ? RoomViewCenter : GlobalPosition + CameraLookAtOffset;
 	}
 
 	private static void ToggleFullscreen()
