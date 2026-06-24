@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dp3kdx0wjwrm2"]
+[gd_scene load_steps=17 format=3 uid="uid://dp3kdx0wjwrm2"]
 
 [ext_resource type="PackedScene" uid="uid://cgkru43k822qi" path="res://assets/isometric_apartment.glb" id="1_apartment"]
 [ext_resource type="Script" uid="uid://djvd6ighcerj1" path="res://scripts/RoomDemo.cs" id="2_script"]
@@ -25,6 +25,16 @@ size = Vector3(5, 0.2, 4.4)
 
 [sub_resource type="BoxShape3D" id="BoxShape_kitchen"]
 size = Vector3(3.25, 0.2, 4.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape_front_room_extension"]
+size = Vector3(8, 0.2, 3.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_front_room_extension"]
+size = Vector3(8, 0.08, 3.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial_front_room_extension"]
+albedo_color = Color(0.17, 0.16, 0.08, 1)
+roughness = 0.88
 
 [sub_resource type="BoxShape3D" id="BoxShape_main_bed_blocker"]
 size = Vector3(2.45, 1.25, 1.95)
@@ -125,6 +135,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.25, 0.08, 0.15)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableFloors/KitchenFloor" unique_id=1145319780]
 shape = SubResource("BoxShape_kitchen")
+
+[node name="Expanded_RoomSpace" type="Node3D" parent="."]
+
+[node name="FrontOpenFloor_Visual" type="MeshInstance3D" parent="Expanded_RoomSpace"]
+position = Vector3(0, 0.02, 4.75)
+mesh = SubResource("BoxMesh_front_room_extension")
+material_override = SubResource("StandardMaterial_front_room_extension")
+
+[node name="FrontOpenFloor_Collider" type="StaticBody3D" parent="Expanded_RoomSpace"]
+position = Vector3(0, 0.0425, 4.75)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Expanded_RoomSpace/FrontOpenFloor_Collider"]
+shape = SubResource("BoxShape_front_room_extension")
 
 [node name="Furniture_Colliders" type="Node3D" parent="."]
 
