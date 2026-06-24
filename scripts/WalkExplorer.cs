@@ -5,14 +5,14 @@ public partial class WalkExplorer : CharacterBody3D
 	[Export] public float WalkSpeed { get; set; } = 3.5f;
 	[Export] public float RunSpeed { get; set; } = 6.5f;
 	[Export] public float JumpVelocity { get; set; } = 4.3f;
-	[Export] public float MouseSensitivity { get; set; } = 0.0022f;
 	[Export] public float FlySpeed { get; set; } = 7.0f;
 	[Export] public float FlyFastSpeed { get; set; } = 16.0f;
+	[Export] public Vector3 CameraOffset { get; set; } = new(5.8f, 6.2f, 7.2f);
+	[Export] public Vector3 CameraLookAtOffset { get; set; } = new(0.0f, 0.85f, -0.25f);
+	[Export] public float CameraFollowSpeed { get; set; } = 8.0f;
 
 	private Node3D _head = null!;
 	private Camera3D _camera = null!;
-	private float _pitch;
-	private bool _mouseCaptured = true;
 	private bool _flyMode;
 	private float _gravity;
 
@@ -23,7 +23,10 @@ public partial class WalkExplorer : CharacterBody3D
 		_gravity = (float)ProjectSettings.GetSetting("physics/3d/default_gravity").AsDouble();
 
 		_camera.Current = true;
-		Input.MouseMode = Input.MouseModeEnum.Captured;
+		_camera.TopLevel = true;
+		_camera.Fov = 48.0f;
+		Input.MouseMode = Input.MouseModeEnum.Visible;
+		UpdateCameraImmediate();
 		UpdateModeLabel();
 	}
 
@@ -34,31 +37,10 @@ public partial class WalkExplorer : CharacterBody3D
 
 	public override void _UnhandledInput(InputEvent @event)
 	{
-		if (@event is InputEventMouseMotion mouseMotion && _mouseCaptured)
-		{
-			RotateY(-mouseMotion.Relative.X * MouseSensitivity);
-			_pitch = Mathf.Clamp(_pitch - mouseMotion.Relative.Y * MouseSensitivity, Mathf.DegToRad(-88.0f), Mathf.DegToRad(88.0f));
-
-			Vector3 headRotation = _head.Rotation;
-			headRotation.X = _pitch;
-			_head.Rotation = headRotation;
-		}
-
-		if (@event is InputEventMouseButton mouseButton && mouseButton.Pressed)
-		{
-			if (mouseButton.ButtonIndex == MouseButton.Left && !_mouseCaptured)
-			{
-				SetMouseCapture(true);
-			}
-		}
-
 		if (@event is InputEventKey keyEvent && keyEvent.Pressed && !keyEvent.Echo)
 		{
 			switch (keyEvent.Keycode)
 			{
-				case Key.Escape:
-					SetMouseCapture(!_mouseCaptured);
-					break;
 				case Key.F11:
 					ToggleFullscreen();
 					break;
@@ -78,8 +60,7 @@ public partial class WalkExplorer : CharacterBody3D
 		input2D.Y += (Input.IsPhysicalKeyPressed(Key.S) ? 1.0f : 0.0f) - (Input.IsPhysicalKeyPressed(Key.W) ? 1.0f : 0.0f);
 		input2D = input2D.LimitLength(1.0f);
 
-		Vector3 direction = Transform.Basis * new Vector3(input2D.X, 0.0f, input2D.Y);
-		direction = direction.Normalized();
+		Vector3 direction = GetCameraRelativeDirection(input2D);
 
 		if (_flyMode)
 		{
@@ -89,6 +70,26 @@ public partial class WalkExplorer : CharacterBody3D
 		{
 			ProcessWalking(direction, (float)delta);
 		}
+
+		UpdateCamera((float)delta);
+	}
+
+	private Vector3 GetCameraRelativeDirection(Vector2 input2D)
+	{
+		if (input2D == Vector2.Zero)
+		{
+			return Vector3.Zero;
+		}
+
+		Vector3 forward = -_camera.GlobalTransform.Basis.Z;
+		forward.Y = 0.0f;
+		forward = forward.Normalized();
+
+		Vector3 right = _camera.GlobalTransform.Basis.X;
+		right.Y = 0.0f;
+		right = right.Normalized();
+
+		return (right * input2D.X + forward * -input2D.Y).Normalized();
 	}
 
 	private void ProcessWalking(Vector3 direction, float delta)
@@ -109,6 +110,7 @@ public partial class WalkExplorer : CharacterBody3D
 
 		Velocity = velocity;
 		MoveAndSlide();
+		FaceMovementDirection(direction);
 	}
 
 	private void ProcessFlying(Vector3 direction)
@@ -127,20 +129,41 @@ public partial class WalkExplorer : CharacterBody3D
 		Vector3 motion = direction + Vector3.Up * vertical;
 		Velocity = motion.LengthSquared() > 0.0f ? motion.Normalized() * speed : Vector3.Zero;
 		MoveAndSlide();
+		FaceMovementDirection(direction);
 	}
 
-	private void SetMouseCapture(bool captured)
+	private void FaceMovementDirection(Vector3 direction)
 	{
-		_mouseCaptured = captured;
-		Input.MouseMode = captured ? Input.MouseModeEnum.Captured : Input.MouseModeEnum.Visible;
+		if (direction.LengthSquared() <= 0.001f)
+		{
+			return;
+		}
+
+		LookAt(GlobalPosition + direction, Vector3.Up);
 	}
 
 	private void UpdateModeLabel()
 	{
 		if (GetNodeOrNull<Label>("../Interface/ModeLabel") is Label label)
 		{
-			label.Text = _flyMode ? "MODE: FLY" : "MODE: WALK";
+			label.Text = _flyMode ? "MODE: ISO FLY" : "MODE: ISO WALK";
 		}
+	}
+
+	private void UpdateCameraImmediate()
+	{
+		Vector3 target = GlobalPosition + CameraLookAtOffset;
+		_camera.GlobalPosition = target + CameraOffset;
+		_camera.LookAt(target, Vector3.Up);
+	}
+
+	private void UpdateCamera(float delta)
+	{
+		Vector3 target = GlobalPosition + CameraLookAtOffset;
+		Vector3 desiredPosition = target + CameraOffset;
+		float weight = 1.0f - Mathf.Exp(-CameraFollowSpeed * delta);
+		_camera.GlobalPosition = _camera.GlobalPosition.Lerp(desiredPosition, weight);
+		_camera.LookAt(target, Vector3.Up);
 	}
 
 	private static void ToggleFullscreen()

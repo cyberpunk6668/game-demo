@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/isometric_apartment.glb" id="1_apartment"]
 [ext_resource type="Script" path="res://scripts/RoomDemo.cs" id="2_script"]
@@ -32,6 +32,14 @@ shader_parameter/vignette_strength = 0.42
 radius = 0.3
 height = 1.8
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial_explorer"]
+albedo_color = Color(0.06, 0.09, 0.14, 1)
+roughness = 0.82
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_explorer"]
+radius = 0.28
+height = 1.35
+
 [node name="IsometricApartmentDemo" type="Node3D"]
 script = ExtResource("2_script")
 
@@ -40,6 +48,10 @@ script = ExtResource("2_script")
 [node name="Explorer" type="CharacterBody3D" parent="."]
 position = Vector3(0.3, 1, 0.2)
 script = ExtResource("4_explorer")
+
+[node name="BodyVisual" type="MeshInstance3D" parent="Explorer"]
+mesh = SubResource("CapsuleMesh_explorer")
+material_override = SubResource("StandardMaterial_explorer")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Explorer"]
 shape = SubResource("CapsuleShape_explorer")
@@ -123,12 +135,11 @@ offset_bottom = 135.0
 theme_override_colors/font_color = Color(0.92, 0.9, 0.82, 1)
 theme_override_font_sizes/font_size = 17
 text = "EXPLORATION CONTROLS
-W A S D   Move       Mouse   Look
-Space     Jump       Shift   Run
+W A S D   Move in fixed isometric view
+Shift     Run        Space   Jump
 F         Walk / Fly Mode
-Fly: Space / E Up, Q / Ctrl Down
-F11       Toggle Fullscreen
-Esc       Release Mouse"
+Fly: Space/E Up, Q/Ctrl Down
+F11       Toggle Fullscreen"
 
 [node name="ModeLabel" type="Label" parent="Interface"]
 offset_left = 18.0
@@ -137,9 +148,10 @@ offset_right = 180.0
 offset_bottom = 208.0
 theme_override_colors/font_color = Color(1, 0.84, 0.45, 1)
 theme_override_font_sizes/font_size = 18
-text = "MODE: WALK"
+text = "MODE: ISO WALK"
 
 [node name="Crosshair" type="Label" parent="Interface"]
+visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
