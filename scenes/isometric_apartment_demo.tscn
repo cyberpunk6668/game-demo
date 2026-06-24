@@ -51,6 +51,7 @@ script = ExtResource("4_explorer")
 CameraFollowSpeed = 10.0
 
 [node name="BodyVisual" type="MeshInstance3D" parent="Explorer" unique_id=1091691824]
+visible = false
 material_override = SubResource("StandardMaterial_explorer")
 mesh = SubResource("CapsuleMesh_explorer")
 
