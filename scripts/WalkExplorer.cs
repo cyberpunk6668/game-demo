@@ -7,6 +7,7 @@ public partial class WalkExplorer : CharacterBody3D
 	[Export] public float JumpVelocity { get; set; } = 4.3f;
 	[Export] public float FlySpeed { get; set; } = 7.0f;
 	[Export] public float FlyFastSpeed { get; set; } = 16.0f;
+	[Export] public bool UseSceneCameraTransform { get; set; } = true;
 	[Export] public bool FixedRoomCamera { get; set; } = true;
 	[Export] public Vector3 RoomViewCenter { get; set; } = new(0.9f, 0.75f, -0.45f);
 	[Export] public Vector3 CameraOffset { get; set; } = new(0.0f, 8.2f, 5.3f);
@@ -16,6 +17,7 @@ public partial class WalkExplorer : CharacterBody3D
 
 	private Node3D _head = null!;
 	private Camera3D _camera = null!;
+	private Transform3D _sceneCameraTransform;
 	private bool _flyMode;
 	private float _gravity;
 
@@ -26,11 +28,21 @@ public partial class WalkExplorer : CharacterBody3D
 		_gravity = (float)ProjectSettings.GetSetting("physics/3d/default_gravity").AsDouble();
 
 		_camera.Current = true;
+		_sceneCameraTransform = _camera.GlobalTransform;
 		_camera.TopLevel = true;
-		_camera.Set("projection", 1);
-		_camera.Set("size", OrthographicSize);
+
+		if (UseSceneCameraTransform)
+		{
+			_camera.GlobalTransform = _sceneCameraTransform;
+		}
+		else
+		{
+			_camera.Set("projection", 1);
+			_camera.Set("size", OrthographicSize);
+			UpdateCameraImmediate();
+		}
+
 		Input.MouseMode = Input.MouseModeEnum.Visible;
-		UpdateCameraImmediate();
 		UpdateModeLabel();
 	}
 
@@ -75,7 +87,14 @@ public partial class WalkExplorer : CharacterBody3D
 			ProcessWalking(direction, (float)delta);
 		}
 
-		UpdateCamera((float)delta);
+		if (UseSceneCameraTransform)
+		{
+			_camera.GlobalTransform = _sceneCameraTransform;
+		}
+		else
+		{
+			UpdateCamera((float)delta);
+		}
 	}
 
 	private Vector3 GetCameraRelativeDirection(Vector2 input2D)

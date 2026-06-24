@@ -1,9 +1,21 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene format=3 uid="uid://dp3kdx0wjwrm2"]
 
-[ext_resource type="PackedScene" path="res://assets/isometric_apartment.glb" id="1_apartment"]
-[ext_resource type="Script" path="res://scripts/RoomDemo.cs" id="2_script"]
-[ext_resource type="Shader" path="res://shaders/painterly_screen.gdshader" id="3_painterly"]
-[ext_resource type="Script" path="res://scripts/WalkExplorer.cs" id="4_explorer"]
+[ext_resource type="PackedScene" uid="uid://cgkru43k822qi" path="res://assets/isometric_apartment.glb" id="1_apartment"]
+[ext_resource type="Script" uid="uid://djvd6ighcerj1" path="res://scripts/RoomDemo.cs" id="2_script"]
+[ext_resource type="Shader" uid="uid://d2si0mwxl5ja8" path="res://shaders/painterly_screen.gdshader" id="3_painterly"]
+[ext_resource type="Script" uid="uid://bk37kbcxagxar" path="res://scripts/WalkExplorer.cs" id="4_explorer"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial_explorer"]
+albedo_color = Color(0.06, 0.09, 0.14, 1)
+roughness = 0.82
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_explorer"]
+radius = 0.28
+height = 1.35
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape_explorer"]
+radius = 0.3
+height = 1.8
 
 [sub_resource type="Environment" id="Environment_apartment"]
 background_mode = 1
@@ -28,114 +40,97 @@ shader_parameter/color_steps = 30.0
 shader_parameter/grain_strength = 0.027
 shader_parameter/vignette_strength = 0.42
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape_explorer"]
-radius = 0.3
-height = 1.8
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial_explorer"]
-albedo_color = Color(0.06, 0.09, 0.14, 1)
-roughness = 0.82
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_explorer"]
-radius = 0.28
-height = 1.35
-
-[node name="IsometricApartmentDemo" type="Node3D"]
+[node name="IsometricApartmentDemo" type="Node3D" unique_id=1633177141]
 script = ExtResource("2_script")
 
-[node name="Apartment" parent="." instance=ExtResource("1_apartment")]
+[node name="Apartment" parent="." unique_id=883712492 instance=ExtResource("1_apartment")]
 
-[node name="Explorer" type="CharacterBody3D" parent="."]
-position = Vector3(0.3, 1, 0.2)
+[node name="Explorer" type="CharacterBody3D" parent="." unique_id=1572116653]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1, 0.2)
 script = ExtResource("4_explorer")
-FixedRoomCamera = true
-RoomViewCenter = Vector3(0.9, 0.75, -0.45)
-CameraOffset = Vector3(0, 8.2, 5.3)
-CameraLookAtOffset = Vector3(0, 0.85, -0.25)
 CameraFollowSpeed = 10.0
-OrthographicSize = 7.8
 
-[node name="BodyVisual" type="MeshInstance3D" parent="Explorer"]
-mesh = SubResource("CapsuleMesh_explorer")
+[node name="BodyVisual" type="MeshInstance3D" parent="Explorer" unique_id=1091691824]
 material_override = SubResource("StandardMaterial_explorer")
+mesh = SubResource("CapsuleMesh_explorer")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Explorer"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Explorer" unique_id=368960005]
 shape = SubResource("CapsuleShape_explorer")
 
-[node name="Head" type="Node3D" parent="Explorer"]
-position = Vector3(0, 0.65, 0)
+[node name="Head" type="Node3D" parent="Explorer" unique_id=695907401]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 
-[node name="Camera3D" type="Camera3D" parent="Explorer/Head"]
-current = true
+[node name="Camera3D" type="Camera3D" parent="Explorer/Head" unique_id=2046855826]
+transform = Transform3D(0.9848078, 0.04931875, -0.1664973, 0, 0.95881975, 0.28401536, 0.1736482, -0.27970052, 0.9442531, -1.1455612, 1.4837433, 3.919871)
 projection = 1
-size = 7.8
+current = true
 fov = 68.0
-near = 0.05
+size = 5.79504
 far = 200.0
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=704886376]
 environment = SubResource("Environment_apartment")
 
-[node name="MoonFill" type="DirectionalLight3D" parent="."]
-rotation_degrees = Vector3(-66, 0, 0)
+[node name="MoonFill" type="DirectionalLight3D" parent="." unique_id=1380883588]
+transform = Transform3D(1, 0, 0, 0, 0.4067366, 0.9135455, 0, -0.9135455, 0.4067366, 0, 0, 0)
 light_color = Color(0.86, 0.86, 0.78, 1)
 light_energy = 1.15
 shadow_enabled = true
 
-[node name="MainWindowWarmth" type="OmniLight3D" parent="."]
-position = Vector3(-1.2, 2.5, -2.3)
+[node name="MainWindowWarmth" type="OmniLight3D" parent="." unique_id=252113642]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 2.5, -2.3)
 light_color = Color(1, 0.78, 0.58, 1)
 light_energy = 2.25
 light_specular = 0.12
 shadow_enabled = true
 omni_range = 5.2
 
-[node name="RightWindowWarmth" type="OmniLight3D" parent="."]
-position = Vector3(6.8, 2.5, -3)
+[node name="RightWindowWarmth" type="OmniLight3D" parent="." unique_id=1099807308]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.8, 2.5, -3)
 light_color = Color(1, 0.8, 0.62, 1)
 light_energy = 1.9
 light_specular = 0.12
 shadow_enabled = true
 omni_range = 4.6
 
-[node name="BulbIconGlow_Main" type="OmniLight3D" parent="."]
-position = Vector3(1.05, 2.85, -2.75)
+[node name="BulbIconGlow_Main" type="OmniLight3D" parent="." unique_id=254851358]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.05, 2.85, -2.75)
 light_color = Color(1, 0.82, 0.42, 1)
 light_energy = 1.65
 light_specular = 0.22
 shadow_enabled = true
 omni_range = 2.3
 
-[node name="BulbIconGlow_Right" type="OmniLight3D" parent="."]
-position = Vector3(8.25, 2.85, -2.95)
+[node name="BulbIconGlow_Right" type="OmniLight3D" parent="." unique_id=790955693]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.25, 2.85, -2.95)
 light_color = Color(1, 0.82, 0.42, 1)
 light_energy = 1.35
 light_specular = 0.22
 shadow_enabled = true
 omni_range = 2.0
 
-[node name="WalkableFloors" type="Node3D" parent="."]
+[node name="WalkableFloors" type="Node3D" parent="." unique_id=532032391]
 
-[node name="MainFloor" type="StaticBody3D" parent="WalkableFloors"]
+[node name="MainFloor" type="StaticBody3D" parent="WalkableFloors" unique_id=974709117]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableFloors/MainFloor"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableFloors/MainFloor" unique_id=1289912605]
 shape = SubResource("BoxShape_main")
 
-[node name="RightFloor" type="StaticBody3D" parent="WalkableFloors"]
-position = Vector3(7, 0.12, -1.55)
+[node name="RightFloor" type="StaticBody3D" parent="WalkableFloors" unique_id=639043543]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.12, -1.55)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableFloors/RightFloor"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableFloors/RightFloor" unique_id=1560379037]
 shape = SubResource("BoxShape_right")
 
-[node name="KitchenFloor" type="StaticBody3D" parent="WalkableFloors"]
-position = Vector3(-6.25, 0.08, 0.15)
+[node name="KitchenFloor" type="StaticBody3D" parent="WalkableFloors" unique_id=1706902524]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.25, 0.08, 0.15)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableFloors/KitchenFloor"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableFloors/KitchenFloor" unique_id=1145319780]
 shape = SubResource("BoxShape_kitchen")
 
-[node name="Interface" type="CanvasLayer" parent="."]
+[node name="Interface" type="CanvasLayer" parent="." unique_id=1785060725]
 
-[node name="PainterlyScreen" type="ColorRect" parent="Interface"]
+[node name="PainterlyScreen" type="ColorRect" parent="Interface" unique_id=1637793607]
 material = SubResource("ShaderMaterial_painterly")
 anchors_preset = 15
 anchor_right = 1.0
@@ -144,14 +139,15 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="HelpPanel" type="ColorRect" parent="Interface"]
+[node name="HelpPanel" type="ColorRect" parent="Interface" unique_id=1119479148]
 offset_left = 18.0
 offset_top = 18.0
 offset_right = 335.0
 offset_bottom = 160.0
 color = Color(0.015, 0.018, 0.024, 0.82)
 
-[node name="HelpText" type="Label" parent="Interface/HelpPanel"]
+[node name="HelpText" type="Label" parent="Interface/HelpPanel" unique_id=1264992522]
+layout_mode = 0
 offset_left = 14.0
 offset_top = 10.0
 offset_right = 305.0
@@ -165,7 +161,7 @@ F         Walk / Fly Mode
 Fly: Space/E Up, Q/Ctrl Down
 F11       Toggle Fullscreen"
 
-[node name="ModeLabel" type="Label" parent="Interface"]
+[node name="ModeLabel" type="Label" parent="Interface" unique_id=1149054672]
 offset_left = 18.0
 offset_top = 172.0
 offset_right = 180.0
@@ -174,7 +170,7 @@ theme_override_colors/font_color = Color(1, 0.84, 0.45, 1)
 theme_override_font_sizes/font_size = 18
 text = "MODE: ISO WALK"
 
-[node name="Crosshair" type="Label" parent="Interface"]
+[node name="Crosshair" type="Label" parent="Interface" unique_id=1315112588]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
