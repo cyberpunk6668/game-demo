@@ -1,0 +1,165 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/train_station/train_station.glb" id="1_station"]
+[ext_resource type="Script" path="res://scripts/TrainStationDemo.cs" id="2_scene"]
+[ext_resource type="Script" path="res://scripts/WalkExplorer.cs" id="3_explorer"]
+[ext_resource type="Shader" path="res://shaders/painterly_screen.gdshader" id="4_painterly"]
+
+[sub_resource type="Environment" id="Environment_station"]
+background_mode = 1
+background_color = Color(0.008, 0.014, 0.025, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.22, 0.31, 0.48, 1)
+ambient_light_energy = 0.55
+tonemap_mode = 2
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape_explorer"]
+radius = 0.3
+height = 1.8
+
+[sub_resource type="BoxShape3D" id="BoxShape_platform"]
+size = Vector3(8, 1.05, 50)
+
+[sub_resource type="BoxShape3D" id="BoxShape_upper"]
+size = Vector3(15, 1.1, 35)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_painterly"]
+shader = ExtResource("4_painterly")
+shader_parameter/color_steps = 32.0
+shader_parameter/grain_strength = 0.022
+shader_parameter/vignette_strength = 0.38
+
+[node name="TrainStationDemo" type="Node3D"]
+script = ExtResource("2_scene")
+
+[node name="Station" parent="." instance=ExtResource("1_station")]
+
+[node name="Explorer" type="CharacterBody3D" parent="."]
+position = Vector3(0.2, 2.0, 18)
+script = ExtResource("3_explorer")
+UseSceneCameraTransform = false
+FixedRoomCamera = false
+CameraOffset = Vector3(9, 12, 10)
+CameraLookAtOffset = Vector3(0, 0.9, 0)
+CameraFollowSpeed = 7.0
+OrthographicSize = 17.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Explorer"]
+shape = SubResource("CapsuleShape_explorer")
+
+[node name="Head" type="Node3D" parent="Explorer"]
+position = Vector3(0, 0.65, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Explorer/Head"]
+projection = 1
+current = true
+fov = 68.0
+size = 17.0
+near = 0.05
+far = 300.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_station")
+
+[node name="ColdMoon" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-58, 35, 0)
+light_color = Color(0.42, 0.56, 0.82, 1)
+light_energy = 1.05
+shadow_enabled = true
+
+[node name="PlatformWarmLightA" type="OmniLight3D" parent="."]
+position = Vector3(1.8, 5.8, 8)
+light_color = Color(1, 0.72, 0.43, 1)
+light_energy = 2.4
+light_specular = 0.12
+shadow_enabled = true
+omni_range = 10.0
+
+[node name="PlatformWarmLightB" type="OmniLight3D" parent="."]
+position = Vector3(1.8, 5.8, -8)
+light_color = Color(1, 0.68, 0.38, 1)
+light_energy = 2.1
+light_specular = 0.12
+shadow_enabled = true
+omni_range = 9.0
+
+[node name="ShelterWarmLight" type="OmniLight3D" parent="."]
+position = Vector3(7, 4.8, 19)
+light_color = Color(1, 0.76, 0.5, 1)
+light_energy = 1.7
+light_specular = 0.1
+shadow_enabled = true
+omni_range = 7.0
+
+[node name="WalkableSurfaces" type="Node3D" parent="."]
+
+[node name="MainPlatform" type="StaticBody3D" parent="WalkableSurfaces"]
+position = Vector3(0.2, 0.52, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableSurfaces/MainPlatform"]
+shape = SubResource("BoxShape_platform")
+
+[node name="UpperGround" type="StaticBody3D" parent="WalkableSurfaces"]
+position = Vector3(11.5, 0.55, -11.5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableSurfaces/UpperGround"]
+shape = SubResource("BoxShape_upper")
+
+[node name="Interface" type="CanvasLayer" parent="."]
+
+[node name="PainterlyScreen" type="ColorRect" parent="Interface"]
+material = SubResource("ShaderMaterial_painterly")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HelpPanel" type="ColorRect" parent="Interface"]
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 335.0
+offset_bottom = 160.0
+color = Color(0.015, 0.018, 0.024, 0.82)
+
+[node name="HelpText" type="Label" parent="Interface/HelpPanel"]
+offset_left = 14.0
+offset_top = 10.0
+offset_right = 305.0
+offset_bottom = 135.0
+theme_override_colors/font_color = Color(0.92, 0.9, 0.82, 1)
+theme_override_font_sizes/font_size = 17
+text = "STATION EXPLORATION
+W A S D   Move       Camera follows
+Space     Jump       Shift   Run
+F         Walk / Fly Mode
+Fly: Space / E Up, Q / Ctrl Down
+F11       Toggle Fullscreen
+Explore the platform and station buildings"
+
+[node name="ModeLabel" type="Label" parent="Interface"]
+offset_left = 18.0
+offset_top = 172.0
+offset_right = 180.0
+offset_bottom = 208.0
+theme_override_colors/font_color = Color(1, 0.84, 0.45, 1)
+theme_override_font_sizes/font_size = 18
+text = "MODE: WALK"
+
+[node name="Crosshair" type="Label" parent="Interface"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -7.0
+offset_top = -15.0
+offset_right = 7.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.58, 0.8)
+theme_override_font_sizes/font_size = 20
+text = "+"
+horizontal_alignment = 1
