@@ -40,8 +40,6 @@ script = ExtResource("2_script")
 [node name="Explorer" type="CharacterBody3D" parent="." unique_id=1572116653]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1, 0.2)
 script = ExtResource("4_explorer")
-BindOriginalHumanModel = true
-OriginalHumanNodePrefix = "Character_"
 CameraFollowSpeed = 10.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Explorer" unique_id=368960005]
@@ -51,11 +49,11 @@ shape = SubResource("CapsuleShape_explorer")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Explorer/Head" unique_id=2046855826]
-transform = Transform3D(0.9848078, 0.04931875, -0.1664973, 0, 0.95881975, 0.28401536, 0.1736482, -0.27970052, 0.9442531, -1.1455612, 1.4837433, 3.919871)
+transform = Transform3D(0.9848078, 0.04931876, -0.16649732, 0, 0.95881975, 0.28401536, 0.17364821, -0.27970055, 0.9442531, -0.76327777, 1.0987941, 3.9216769)
 projection = 1
 current = true
 fov = 68.0
-size = 5.79504
+size = 4.9324656
 far = 200.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=704886376]
