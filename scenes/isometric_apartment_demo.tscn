@@ -50,10 +50,10 @@ position = Vector3(0.3, 1, 0.2)
 script = ExtResource("4_explorer")
 FixedRoomCamera = true
 RoomViewCenter = Vector3(0.9, 0.75, -0.45)
-CameraOffset = Vector3(0, 10.5, 6)
+CameraOffset = Vector3(0, 8.2, 5.3)
 CameraLookAtOffset = Vector3(0, 0.85, -0.25)
 CameraFollowSpeed = 10.0
-OrthographicSize = 8.4
+OrthographicSize = 7.8
 
 [node name="BodyVisual" type="MeshInstance3D" parent="Explorer"]
 mesh = SubResource("CapsuleMesh_explorer")
@@ -68,7 +68,7 @@ position = Vector3(0, 0.65, 0)
 [node name="Camera3D" type="Camera3D" parent="Explorer/Head"]
 current = true
 projection = 1
-size = 8.4
+size = 7.8
 fov = 68.0
 near = 0.05
 far = 200.0

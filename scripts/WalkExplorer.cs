@@ -9,10 +9,10 @@ public partial class WalkExplorer : CharacterBody3D
 	[Export] public float FlyFastSpeed { get; set; } = 16.0f;
 	[Export] public bool FixedRoomCamera { get; set; } = true;
 	[Export] public Vector3 RoomViewCenter { get; set; } = new(0.9f, 0.75f, -0.45f);
-	[Export] public Vector3 CameraOffset { get; set; } = new(0.0f, 10.5f, 6.0f);
+	[Export] public Vector3 CameraOffset { get; set; } = new(0.0f, 8.2f, 5.3f);
 	[Export] public Vector3 CameraLookAtOffset { get; set; } = new(0.0f, 0.85f, -0.25f);
 	[Export] public float CameraFollowSpeed { get; set; } = 8.0f;
-	[Export] public float OrthographicSize { get; set; } = 8.4f;
+	[Export] public float OrthographicSize { get; set; } = 7.8f;
 
 	private Node3D _head = null!;
 	private Camera3D _camera = null!;
