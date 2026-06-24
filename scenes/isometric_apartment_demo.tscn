@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dp3kdx0wjwrm2"]
+[gd_scene load_steps=14 format=3 uid="uid://dp3kdx0wjwrm2"]
 
 [ext_resource type="PackedScene" uid="uid://cgkru43k822qi" path="res://assets/isometric_apartment.glb" id="1_apartment"]
 [ext_resource type="Script" uid="uid://djvd6ighcerj1" path="res://scripts/RoomDemo.cs" id="2_script"]
@@ -25,6 +25,15 @@ size = Vector3(5, 0.2, 4.4)
 
 [sub_resource type="BoxShape3D" id="BoxShape_kitchen"]
 size = Vector3(3.25, 0.2, 4.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape_main_bed_blocker"]
+size = Vector3(2.45, 1.25, 1.95)
+
+[sub_resource type="BoxShape3D" id="BoxShape_main_bookshelf_blocker"]
+size = Vector3(1.15, 2.45, 0.7)
+
+[sub_resource type="BoxShape3D" id="BoxShape_main_armchair_blocker"]
+size = Vector3(1.35, 1.1, 1.35)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_painterly"]
 shader = ExtResource("3_painterly")
@@ -116,6 +125,26 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.25, 0.08, 0.15)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableFloors/KitchenFloor" unique_id=1145319780]
 shape = SubResource("BoxShape_kitchen")
+
+[node name="Furniture_Colliders" type="Node3D" parent="."]
+
+[node name="MainBed_Blocker" type="StaticBody3D" parent="Furniture_Colliders"]
+position = Vector3(-1.9, 0.62, -1)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Furniture_Colliders/MainBed_Blocker"]
+shape = SubResource("BoxShape_main_bed_blocker")
+
+[node name="MainBookshelf_Blocker" type="StaticBody3D" parent="Furniture_Colliders"]
+position = Vector3(3.52, 1.25, -1.2)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Furniture_Colliders/MainBookshelf_Blocker"]
+shape = SubResource("BoxShape_main_bookshelf_blocker")
+
+[node name="MainArmchair_Blocker" type="StaticBody3D" parent="Furniture_Colliders"]
+position = Vector3(2, 0.68, 2)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Furniture_Colliders/MainArmchair_Blocker"]
+shape = SubResource("BoxShape_main_armchair_blocker")
 
 [node name="Interface" type="CanvasLayer" parent="." unique_id=1785060725]
 
