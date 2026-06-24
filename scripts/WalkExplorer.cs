@@ -186,6 +186,7 @@ public partial class WalkExplorer : CharacterBody3D
 
 	private void ProcessWalking(Vector3 direction, float delta)
 	{
+		//real walk and the and the walk 
 		float speed = Input.IsKeyPressed(Key.Shift) ? RunSpeed : WalkSpeed;
 		Vector3 velocity = Velocity;
 		velocity.X = direction.X * speed;
