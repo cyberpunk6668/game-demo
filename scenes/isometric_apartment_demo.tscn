@@ -1,6 +1,6 @@
-[gd_scene load_steps=17 format=3 uid="uid://dp3kdx0wjwrm2"]
+[gd_scene format=3 uid="uid://dp3kdx0wjwrm2"]
 
-[ext_resource type="PackedScene" path="res://scenes/isometric_apartment_editable.tscn" id="1_apartment"]
+[ext_resource type="PackedScene" uid="uid://dpnnsr2pgmvn3" path="res://scenes/isometric_apartment_editable.tscn" id="1_apartment"]
 [ext_resource type="Script" uid="uid://djvd6ighcerj1" path="res://scripts/RoomDemo.cs" id="2_script"]
 [ext_resource type="Shader" uid="uid://d2si0mwxl5ja8" path="res://shaders/painterly_screen.gdshader" id="3_painterly"]
 [ext_resource type="Script" uid="uid://bk37kbcxagxar" path="res://scripts/WalkExplorer.cs" id="4_explorer"]
@@ -26,15 +26,15 @@ size = Vector3(5, 0.2, 4.4)
 [sub_resource type="BoxShape3D" id="BoxShape_kitchen"]
 size = Vector3(3.25, 0.2, 4.2)
 
-[sub_resource type="BoxShape3D" id="BoxShape_front_room_extension"]
-size = Vector3(8, 0.2, 3.4)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial_front_room_extension"]
+albedo_color = Color(0.17, 0.16, 0.08, 1)
+roughness = 0.88
 
 [sub_resource type="BoxMesh" id="BoxMesh_front_room_extension"]
 size = Vector3(8, 0.08, 3.4)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial_front_room_extension"]
-albedo_color = Color(0.17, 0.16, 0.08, 1)
-roughness = 0.88
+[sub_resource type="BoxShape3D" id="BoxShape_front_room_extension"]
+size = Vector3(8, 0.2, 3.4)
 
 [sub_resource type="BoxShape3D" id="BoxShape_main_bed_blocker"]
 size = Vector3(2.45, 1.25, 1.95)
@@ -68,11 +68,11 @@ shape = SubResource("CapsuleShape_explorer")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Explorer/Head" unique_id=2046855826]
-transform = Transform3D(0.9848078, 0.04931876, -0.16649732, 0, 0.95881975, 0.28401536, 0.17364821, -0.27970055, 0.9442531, -0.76327777, 1.0987941, 3.9216769)
+transform = Transform3D(0.9848078, 0.04931876, -0.16649732, 0, 0.95881975, 0.28401536, 0.17364821, -0.27970055, 0.9442531, 1.4422653, 1.0276324, 6.1662936)
 projection = 1
 current = true
 fov = 68.0
-size = 5.426427
+size = 8.578385
 far = 200.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=704886376]
@@ -136,37 +136,37 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.25, 0.08, 0.15)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableFloors/KitchenFloor" unique_id=1145319780]
 shape = SubResource("BoxShape_kitchen")
 
-[node name="Expanded_RoomSpace" type="Node3D" parent="."]
+[node name="Expanded_RoomSpace" type="Node3D" parent="." unique_id=1010566908]
 
-[node name="FrontOpenFloor_Visual" type="MeshInstance3D" parent="Expanded_RoomSpace"]
-position = Vector3(0, 0.02, 4.75)
-mesh = SubResource("BoxMesh_front_room_extension")
+[node name="FrontOpenFloor_Visual" type="MeshInstance3D" parent="Expanded_RoomSpace" unique_id=1484947710]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 4.75)
 material_override = SubResource("StandardMaterial_front_room_extension")
+mesh = SubResource("BoxMesh_front_room_extension")
 
-[node name="FrontOpenFloor_Collider" type="StaticBody3D" parent="Expanded_RoomSpace"]
-position = Vector3(0, 0.0425, 4.75)
+[node name="FrontOpenFloor_Collider" type="StaticBody3D" parent="Expanded_RoomSpace" unique_id=48343276]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0425, 4.75)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Expanded_RoomSpace/FrontOpenFloor_Collider"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Expanded_RoomSpace/FrontOpenFloor_Collider" unique_id=1712292594]
 shape = SubResource("BoxShape_front_room_extension")
 
-[node name="Furniture_Colliders" type="Node3D" parent="."]
+[node name="Furniture_Colliders" type="Node3D" parent="." unique_id=1642707359]
 
-[node name="MainBed_Blocker" type="StaticBody3D" parent="Furniture_Colliders"]
-position = Vector3(-1.9, 0.62, -1)
+[node name="MainBed_Blocker" type="StaticBody3D" parent="Furniture_Colliders" unique_id=1703265723]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9, 0.62, -1)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Furniture_Colliders/MainBed_Blocker"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Furniture_Colliders/MainBed_Blocker" unique_id=552513233]
 shape = SubResource("BoxShape_main_bed_blocker")
 
-[node name="MainBookshelf_Blocker" type="StaticBody3D" parent="Furniture_Colliders"]
-position = Vector3(3.52, 1.25, -1.2)
+[node name="MainBookshelf_Blocker" type="StaticBody3D" parent="Furniture_Colliders" unique_id=1647950195]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.52, 1.25, -1.2)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Furniture_Colliders/MainBookshelf_Blocker"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Furniture_Colliders/MainBookshelf_Blocker" unique_id=1960550083]
 shape = SubResource("BoxShape_main_bookshelf_blocker")
 
-[node name="MainArmchair_Blocker" type="StaticBody3D" parent="Furniture_Colliders"]
-position = Vector3(2, 0.68, 2)
+[node name="MainArmchair_Blocker" type="StaticBody3D" parent="Furniture_Colliders" unique_id=264555034]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.68, 2)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Furniture_Colliders/MainArmchair_Blocker"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Furniture_Colliders/MainArmchair_Blocker" unique_id=292215305]
 shape = SubResource("BoxShape_main_armchair_blocker")
 
 [node name="Interface" type="CanvasLayer" parent="." unique_id=1785060725]
