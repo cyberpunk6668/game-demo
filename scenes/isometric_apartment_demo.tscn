@@ -1,6 +1,6 @@
 [gd_scene load_steps=17 format=3 uid="uid://dp3kdx0wjwrm2"]
 
-[ext_resource type="PackedScene" uid="uid://cgkru43k822qi" path="res://assets/isometric_apartment.glb" id="1_apartment"]
+[ext_resource type="PackedScene" path="res://scenes/isometric_apartment_editable.tscn" id="1_apartment"]
 [ext_resource type="Script" uid="uid://djvd6ighcerj1" path="res://scripts/RoomDemo.cs" id="2_script"]
 [ext_resource type="Shader" uid="uid://d2si0mwxl5ja8" path="res://shaders/painterly_screen.gdshader" id="3_painterly"]
 [ext_resource type="Script" uid="uid://bk37kbcxagxar" path="res://scripts/WalkExplorer.cs" id="4_explorer"]
