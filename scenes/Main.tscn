@@ -1,26 +1,11 @@
-[gd_scene load_steps=13 format=3 uid="uid://dnqx11r70k271"]
+[gd_scene format=3 uid="uid://dnqx11r70k271"]
 
-[ext_resource type="Script" path="res://scripts/GameController.cs" id="1_gamecontroller"]
-[ext_resource type="Script" path="res://scripts/TimeStateManager.cs" id="2_timestate"]
-[ext_resource type="Script" path="res://scripts/TemporalProp.cs" id="3_temporalprop"]
-[ext_resource type="Script" path="res://scripts/PlayerCharacter.cs" id="4_player"]
-[ext_resource type="Texture2D" path="res://assets/characters/player/spritesheets/b28402b6556d48cfed87006d59b2ddc.png" id="5_player_stand"]
-[ext_resource type="Shader" path="res://assets/shaders/chroma_key/chroma_key_green.gdshader" id="6_chroma_key"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_player_chroma_key"]
-shader = ExtResource("6_chroma_key")
-shader_parameter/key_color = Color(0, 1, 0, 1)
-shader_parameter/threshold = 0.35
-shader_parameter/softness = 0.08
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_prop"]
-size = Vector2(96, 64)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
-size = Vector2(32, 42)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_calendar"]
-size = Vector2(100, 80)
+[ext_resource type="Script" uid="uid://cwv2retwali7u" path="res://scripts/GameController.cs" id="1_gamecontroller"]
+[ext_resource type="Script" uid="uid://bclabkmfpv5na" path="res://scripts/TimeStateManager.cs" id="2_timestate"]
+[ext_resource type="Script" uid="uid://dld8fb7shsku" path="res://scripts/TemporalProp.cs" id="3_temporalprop"]
+[ext_resource type="Script" uid="uid://c7wuyd4bx5rur" path="res://scripts/PlayerCharacter.cs" id="4_player"]
+[ext_resource type="Texture2D" uid="uid://1v44l76fvya3" path="res://assets/characters/player/spritesheets/b28402b6556d48cfed87006d59b2ddc.png" id="5_player_stand"]
+[ext_resource type="Shader" uid="uid://cbfiehxv001bv" path="res://assets/shaders/chroma_key/chroma_key_green.gdshader" id="6_chroma_key"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_h"]
 size = Vector2(1040, 24)
@@ -28,46 +13,60 @@ size = Vector2(1040, 24)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_v"]
 size = Vector2(24, 560)
 
-[node name="Root" type="Node"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_prop"]
+size = Vector2(96, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_calendar"]
+size = Vector2(100, 80)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_player_chroma_key"]
+shader = ExtResource("6_chroma_key")
+shader_parameter/key_color = Color(0, 1, 0, 1)
+shader_parameter/threshold = 0.35
+shader_parameter/softness = 0.08
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
+size = Vector2(32, 42)
+
+[node name="Root" type="Node" unique_id=347229407]
 script = ExtResource("1_gamecontroller")
 
-[node name="TimeStateManager" type="Node" parent="."]
+[node name="TimeStateManager" type="Node" parent="." unique_id=550728942]
 script = ExtResource("2_timestate")
 
-[node name="MainStage" type="Node2D" parent="."]
+[node name="MainStage" type="Node2D" parent="." unique_id=652372280]
 
-[node name="CanvasModulate" type="CanvasModulate" parent="MainStage"]
+[node name="CanvasModulate" type="CanvasModulate" parent="MainStage" unique_id=77112443]
 color = Color(0.56, 0.68, 0.85, 1)
 
-[node name="TileMapLayer_Environment_Base" type="Node2D" parent="MainStage"]
+[node name="TileMapLayer_Environment_Base" type="Node2D" parent="MainStage" unique_id=1357571396]
 
-[node name="Room_Colliders" type="StaticBody2D" parent="MainStage"]
+[node name="Room_Colliders" type="StaticBody2D" parent="MainStage" unique_id=1632423680]
 
-[node name="Wall_Top" type="CollisionShape2D" parent="MainStage/Room_Colliders"]
+[node name="Wall_Top" type="CollisionShape2D" parent="MainStage/Room_Colliders" unique_id=518923551]
 position = Vector2(640, 68)
 shape = SubResource("RectangleShape2D_wall_h")
 
-[node name="Wall_Bottom" type="CollisionShape2D" parent="MainStage/Room_Colliders"]
+[node name="Wall_Bottom" type="CollisionShape2D" parent="MainStage/Room_Colliders" unique_id=1786615519]
 position = Vector2(640, 652)
 shape = SubResource("RectangleShape2D_wall_h")
 
-[node name="Wall_Left" type="CollisionShape2D" parent="MainStage/Room_Colliders"]
+[node name="Wall_Left" type="CollisionShape2D" parent="MainStage/Room_Colliders" unique_id=403681671]
 position = Vector2(108, 360)
 shape = SubResource("RectangleShape2D_wall_v")
 
-[node name="Wall_Right" type="CollisionShape2D" parent="MainStage/Room_Colliders"]
+[node name="Wall_Right" type="CollisionShape2D" parent="MainStage/Room_Colliders" unique_id=1313062420]
 position = Vector2(1172, 360)
 shape = SubResource("RectangleShape2D_wall_v")
 
-[node name="Dynamic_Props" type="Node2D" parent="MainStage"]
+[node name="Dynamic_Props" type="Node2D" parent="MainStage" unique_id=168255195]
 y_sort_enabled = true
 
-[node name="Bed_Prop" type="StaticBody2D" parent="MainStage/Dynamic_Props"]
+[node name="Bed_Prop" type="StaticBody2D" parent="MainStage/Dynamic_Props" unique_id=550163021]
 position = Vector2(335, 520)
 
-[node name="Desk_Diary" type="Area2D" parent="MainStage/Dynamic_Props"]
+[node name="Desk_Diary" type="Area2D" parent="MainStage/Dynamic_Props" unique_id=1602455213]
 position = Vector2(650, 385)
-input_pickable = true
 script = ExtResource("3_temporalprop")
 PropName = "Diary"
 DisplayName = "书桌日记"
@@ -75,25 +74,24 @@ TextDayMinus3 = "纸张几乎空白。旁边压着两张未拆封电影票：后
 TextDayZero = "一封写了一半的道别信。字迹越到后面越凌乱，像被雨水和手指一起擦散。"
 TextDayPlus7 = "纸页上密密麻麻画满了时空推导式。每一行都在试图证明无法证明的事。"
 
-[node name="Shape2D" type="Polygon2D" parent="MainStage/Dynamic_Props/Desk_Diary"]
-polygon = PackedVector2Array(-48, -28, 48, -28, 48, 28, -48, 28)
+[node name="Shape2D" type="Polygon2D" parent="MainStage/Dynamic_Props/Desk_Diary" unique_id=1714544182]
 color = Color(0.8, 0.7, 0.45, 1)
+polygon = PackedVector2Array(-48, -28, 48, -28, 48, 28, -48, 28)
 
-[node name="Sprite2D" type="Sprite2D" parent="MainStage/Dynamic_Props/Desk_Diary"]
+[node name="Sprite2D" type="Sprite2D" parent="MainStage/Dynamic_Props/Desk_Diary" unique_id=2097767175]
 
-[node name="PropLabel" type="Label" parent="MainStage/Dynamic_Props/Desk_Diary"]
+[node name="PropLabel" type="Label" parent="MainStage/Dynamic_Props/Desk_Diary" unique_id=70178319]
 offset_left = -50.0
 offset_top = 34.0
 offset_right = 80.0
 offset_bottom = 58.0
 text = "书桌日记"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainStage/Dynamic_Props/Desk_Diary"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainStage/Dynamic_Props/Desk_Diary" unique_id=1522461725]
 shape = SubResource("RectangleShape2D_prop")
 
-[node name="Audio_Recorder" type="Area2D" parent="MainStage/Dynamic_Props"]
+[node name="Audio_Recorder" type="Area2D" parent="MainStage/Dynamic_Props" unique_id=19451575]
 position = Vector2(790, 385)
-input_pickable = true
 script = ExtResource("3_temporalprop")
 PropName = "Recorder"
 DisplayName = "桌面录音机"
@@ -104,25 +102,24 @@ ColorDayMinus3 = Color(0.95, 0.75, 0.35, 1)
 ColorDayZero = Color(0.45, 0.55, 0.62, 1)
 ColorDayPlus7 = Color(0.42, 0.32, 0.55, 1)
 
-[node name="Shape2D" type="Polygon2D" parent="MainStage/Dynamic_Props/Audio_Recorder"]
-polygon = PackedVector2Array(-46, -24, 46, -24, 46, 24, -46, 24)
+[node name="Shape2D" type="Polygon2D" parent="MainStage/Dynamic_Props/Audio_Recorder" unique_id=1598249767]
 color = Color(0.95, 0.75, 0.35, 1)
+polygon = PackedVector2Array(-46, -24, 46, -24, 46, 24, -46, 24)
 
-[node name="Sprite2D" type="Sprite2D" parent="MainStage/Dynamic_Props/Audio_Recorder"]
+[node name="Sprite2D" type="Sprite2D" parent="MainStage/Dynamic_Props/Audio_Recorder" unique_id=2006536498]
 
-[node name="PropLabel" type="Label" parent="MainStage/Dynamic_Props/Audio_Recorder"]
+[node name="PropLabel" type="Label" parent="MainStage/Dynamic_Props/Audio_Recorder" unique_id=1473044791]
 offset_left = -54.0
 offset_top = 32.0
 offset_right = 90.0
 offset_bottom = 56.0
 text = "桌面录音机"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainStage/Dynamic_Props/Audio_Recorder"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainStage/Dynamic_Props/Audio_Recorder" unique_id=257592680]
 shape = SubResource("RectangleShape2D_prop")
 
-[node name="Pill_Bottle" type="Area2D" parent="MainStage/Dynamic_Props"]
+[node name="Pill_Bottle" type="Area2D" parent="MainStage/Dynamic_Props" unique_id=873400271]
 position = Vector2(320, 585)
-input_pickable = true
 script = ExtResource("3_temporalprop")
 PropName = "PillBottle"
 DisplayName = "床头柜药瓶"
@@ -133,25 +130,24 @@ ColorDayMinus3 = Color(0.75, 0.9, 0.8, 1)
 ColorDayZero = Color(0.7, 0.7, 0.65, 1)
 ColorDayPlus7 = Color(0.55, 0.35, 0.55, 1)
 
-[node name="Shape2D" type="Polygon2D" parent="MainStage/Dynamic_Props/Pill_Bottle"]
-polygon = PackedVector2Array(-28, -42, 28, -42, 28, 42, -28, 42)
+[node name="Shape2D" type="Polygon2D" parent="MainStage/Dynamic_Props/Pill_Bottle" unique_id=1729450650]
 color = Color(0.75, 0.9, 0.8, 1)
+polygon = PackedVector2Array(-28, -42, 28, -42, 28, 42, -28, 42)
 
-[node name="Sprite2D" type="Sprite2D" parent="MainStage/Dynamic_Props/Pill_Bottle"]
+[node name="Sprite2D" type="Sprite2D" parent="MainStage/Dynamic_Props/Pill_Bottle" unique_id=34605946]
 
-[node name="PropLabel" type="Label" parent="MainStage/Dynamic_Props/Pill_Bottle"]
+[node name="PropLabel" type="Label" parent="MainStage/Dynamic_Props/Pill_Bottle" unique_id=1903948635]
 offset_left = -52.0
 offset_top = 46.0
 offset_right = 86.0
 offset_bottom = 70.0
 text = "床头柜药瓶"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainStage/Dynamic_Props/Pill_Bottle"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainStage/Dynamic_Props/Pill_Bottle" unique_id=1241094205]
 shape = SubResource("RectangleShape2D_prop")
 
-[node name="Calendar_Anchor" type="Area2D" parent="MainStage/Dynamic_Props"]
+[node name="Calendar_Anchor" type="Area2D" parent="MainStage/Dynamic_Props" unique_id=401356628]
 position = Vector2(952, 202)
-input_pickable = true
 script = ExtResource("3_temporalprop")
 PropName = "Calendar"
 DisplayName = "旧日历 / 时间锚定矩阵"
@@ -159,76 +155,74 @@ TextDayMinus3 = "日历停在事故前三天。电影约定、欢快留声与满
 TextDayZero = "日历边缘被雨水泡烂。当天是所有噪声最强的中心点。"
 TextDayPlus7 = "日历上的日期被反复圈住，旁边写着：‘七天后仍然无法改变。’"
 
-[node name="Shape2D" type="Polygon2D" parent="MainStage/Dynamic_Props/Calendar_Anchor"]
-polygon = PackedVector2Array(-50, -40, 50, -40, 50, 40, -50, 40)
+[node name="Shape2D" type="Polygon2D" parent="MainStage/Dynamic_Props/Calendar_Anchor" unique_id=1588625997]
 color = Color(0.62, 0.55, 0.38, 1)
+polygon = PackedVector2Array(-50, -40, 50, -40, 50, 40, -50, 40)
 
-[node name="Sprite2D" type="Sprite2D" parent="MainStage/Dynamic_Props/Calendar_Anchor"]
+[node name="Sprite2D" type="Sprite2D" parent="MainStage/Dynamic_Props/Calendar_Anchor" unique_id=235980314]
 
-[node name="PropLabel" type="Label" parent="MainStage/Dynamic_Props/Calendar_Anchor"]
+[node name="PropLabel" type="Label" parent="MainStage/Dynamic_Props/Calendar_Anchor" unique_id=739499505]
 offset_left = -72.0
 offset_top = 46.0
 offset_right = 116.0
 offset_bottom = 70.0
 text = "旧日历"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainStage/Dynamic_Props/Calendar_Anchor"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainStage/Dynamic_Props/Calendar_Anchor" unique_id=205213649]
 shape = SubResource("RectangleShape2D_calendar")
 
-[node name="Light_System" type="Node2D" parent="MainStage"]
+[node name="Light_System" type="Node2D" parent="MainStage" unique_id=1043693372]
 
-[node name="DeskLamp" type="PointLight2D" parent="MainStage/Light_System"]
+[node name="DeskLamp" type="PointLight2D" parent="MainStage/Light_System" unique_id=358165878]
 position = Vector2(610, 344)
-energy = 1.1
 color = Color(1, 0.62, 0.27, 1)
+energy = 1.1
 
-[node name="Window_Moon" type="PointLight2D" parent="MainStage/Light_System"]
+[node name="Window_Moon" type="PointLight2D" parent="MainStage/Light_System" unique_id=96669240]
 position = Vector2(188, 260)
-energy = 0.55
 color = Color(0.45, 0.65, 1, 1)
+energy = 0.55
 
-[node name="VFX_System" type="Node2D" parent="MainStage"]
+[node name="VFX_System" type="Node2D" parent="MainStage" unique_id=1332680490]
 
-[node name="Window_Rain_Normal" type="GPUParticles2D" parent="MainStage/VFX_System"]
+[node name="Window_Rain_Normal" type="GPUParticles2D" parent="MainStage/VFX_System" unique_id=2058048056]
 position = Vector2(205, 260)
 emitting = false
 amount = 120
 lifetime = 1.6
 
-[node name="Window_Rain_Retrograde" type="GPUParticles2D" parent="MainStage/VFX_System"]
+[node name="Window_Rain_Retrograde" type="GPUParticles2D" parent="MainStage/VFX_System" unique_id=681651501]
 position = Vector2(205, 260)
 emitting = false
 amount = 70
 lifetime = 1.4
 
-[node name="Player_Character" type="CharacterBody2D" parent="MainStage"]
+[node name="Player_Character" type="CharacterBody2D" parent="MainStage" unique_id=589987813]
 position = Vector2(610, 560)
 script = ExtResource("4_player")
 
-[node name="Sprite2D" type="Sprite2D" parent="MainStage/Player_Character"]
+[node name="Sprite2D" type="Sprite2D" parent="MainStage/Player_Character" unique_id=1675651774]
 material = SubResource("ShaderMaterial_player_chroma_key")
-texture = ExtResource("5_player_stand")
 scale = Vector2(0.32, 0.32)
+texture = ExtResource("5_player_stand")
 offset = Vector2(0, -190)
 
-[node name="BodyMarker" type="Polygon2D" parent="MainStage/Player_Character"]
+[node name="BodyMarker" type="Polygon2D" parent="MainStage/Player_Character" unique_id=2087301419]
 visible = false
-polygon = PackedVector2Array(-16, -24, 16, -24, 16, 24, -16, 24)
 color = Color(0.78, 0.82, 0.86, 1)
+polygon = PackedVector2Array(-16, -24, 16, -24, 16, 24, -16, 24)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="MainStage/Player_Character"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="MainStage/Player_Character" unique_id=1785314056]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainStage/Player_Character"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainStage/Player_Character" unique_id=673086782]
 shape = SubResource("RectangleShape2D_player")
 
-[node name="Camera2D" type="Camera2D" parent="MainStage/Player_Character"]
-enabled = true
+[node name="Camera2D" type="Camera2D" parent="MainStage/Player_Character" unique_id=1210231406]
 position_smoothing_enabled = true
-position_smoothing_speed = 5.0
 
-[node name="UILayer" type="CanvasLayer" parent="."]
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=1644849757]
 
-[node name="InteractionLabel" type="Label" parent="UILayer"]
+[node name="InteractionLabel" type="Label" parent="UILayer" unique_id=616693022]
 visible = false
 offset_left = 560.0
 offset_top = 610.0
@@ -236,14 +230,14 @@ offset_right = 900.0
 offset_bottom = 642.0
 text = "[E] Inspect"
 
-[node name="SanityLabel" type="Label" parent="UILayer"]
+[node name="SanityLabel" type="Label" parent="UILayer" unique_id=1933385027]
 offset_left = 1060.0
 offset_top = 24.0
 offset_right = 1240.0
 offset_bottom = 54.0
 text = "Sanity: 100"
 
-[node name="InspectionOverlay" type="ColorRect" parent="UILayer"]
+[node name="InspectionOverlay" type="ColorRect" parent="UILayer" unique_id=2110809673]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
@@ -253,16 +247,17 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0)
 
-[node name="InspectionText" type="Label" parent="UILayer/InspectionOverlay"]
+[node name="InspectionText" type="Label" parent="UILayer/InspectionOverlay" unique_id=1329834244]
+layout_mode = 0
 offset_left = 170.0
 offset_top = 465.0
 offset_right = 1110.0
 offset_bottom = 650.0
 autowrap_mode = 3
-text = ""
 
-[node name="CalendarMatrix" type="Control" parent="UILayer"]
+[node name="CalendarMatrix" type="Control" parent="UILayer" unique_id=279044263]
 visible = false
+layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -273,65 +268,74 @@ offset_top = -190.0
 offset_right = 300.0
 offset_bottom = 190.0
 
-[node name="Panel" type="Panel" parent="UILayer/CalendarMatrix"]
-anchors_preset = 15
+[node name="Panel" type="Panel" parent="UILayer/CalendarMatrix" unique_id=1485219997]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Title" type="Label" parent="UILayer/CalendarMatrix"]
+[node name="Title" type="Label" parent="UILayer/CalendarMatrix" unique_id=132334343]
+layout_mode = 0
 offset_left = 34.0
 offset_top = 24.0
 offset_right = 566.0
 offset_bottom = 55.0
 text = "LOGIC TIME ANCHOR MATRIX"
 
-[node name="SelectionLabel" type="Label" parent="UILayer/CalendarMatrix"]
+[node name="SelectionLabel" type="Label" parent="UILayer/CalendarMatrix" unique_id=283208290]
+layout_mode = 0
 offset_left = 48.0
 offset_top = 88.0
 offset_right = 550.0
 offset_bottom = 122.0
 text = "请选择一个时间锚点"
 
-[node name="DayMinus3Button" type="Button" parent="UILayer/CalendarMatrix"]
+[node name="DayMinus3Button" type="Button" parent="UILayer/CalendarMatrix" unique_id=594746799]
+layout_mode = 0
 offset_left = 52.0
 offset_top = 152.0
 offset_right = 202.0
 offset_bottom = 208.0
-text = "Day -3\n电影约定"
+text = "Day -3
+电影约定"
 
-[node name="DayZeroButton" type="Button" parent="UILayer/CalendarMatrix"]
+[node name="DayZeroButton" type="Button" parent="UILayer/CalendarMatrix" unique_id=1660808451]
+layout_mode = 0
 offset_left = 226.0
 offset_top = 152.0
 offset_right = 376.0
 offset_bottom = 208.0
-text = "Day 0\n绝笔道别"
+text = "Day 0
+绝笔道别"
 
-[node name="DayPlus7Button" type="Button" parent="UILayer/CalendarMatrix"]
+[node name="DayPlus7Button" type="Button" parent="UILayer/CalendarMatrix" unique_id=777416415]
+layout_mode = 0
 offset_left = 400.0
 offset_top = 152.0
 offset_right = 550.0
 offset_bottom = 208.0
-text = "Day +7\n警方通告"
+text = "Day +7
+警方通告"
 
-[node name="SubmitAnchorButton" type="Button" parent="UILayer/CalendarMatrix"]
+[node name="SubmitAnchorButton" type="Button" parent="UILayer/CalendarMatrix" unique_id=550722775]
+layout_mode = 0
 offset_left = 204.0
 offset_top = 286.0
 offset_right = 396.0
 offset_bottom = 332.0
 text = "确立时空"
 
-[node name="CountdownBar" type="TextureProgressBar" parent="UILayer/CalendarMatrix"]
+[node name="CountdownBar" type="TextureProgressBar" parent="UILayer/CalendarMatrix" unique_id=262657194]
+layout_mode = 0
 offset_left = 552.0
 offset_top = 78.0
 offset_right = 572.0
 offset_bottom = 332.0
-max_value = 100.0
 value = 100.0
 fill_mode = 3
 
-[node name="GlitchShaderRect" type="ColorRect" parent="UILayer"]
+[node name="GlitchShaderRect" type="ColorRect" parent="UILayer" unique_id=953591756]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -340,10 +344,10 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 1, 1, 0)
 
-[node name="TransitionAnimationPlayer" type="AnimationPlayer" parent="UILayer"]
+[node name="TransitionAnimationPlayer" type="AnimationPlayer" parent="UILayer" unique_id=1247791252]
 
-[node name="GlitchAudioPlayer" type="AudioStreamPlayer" parent="UILayer"]
+[node name="GlitchAudioPlayer" type="AudioStreamPlayer" parent="UILayer" unique_id=1159043378]
 
-[node name="RainAudioPlayer" type="AudioStreamPlayer" parent="UILayer"]
+[node name="RainAudioPlayer" type="AudioStreamPlayer" parent="UILayer" unique_id=255372205]
 
-[node name="TrainAudioPlayer" type="AudioStreamPlayer" parent="UILayer"]
+[node name="TrainAudioPlayer" type="AudioStreamPlayer" parent="UILayer" unique_id=55133638]
