@@ -14,8 +14,8 @@ public partial class WalkExplorer : CharacterBody3D
 	[Export] public Vector3 CameraLookAtOffset { get; set; } = new(0.0f, 0.85f, -0.25f);
 	[Export] public float CameraFollowSpeed { get; set; } = 8.0f;
 	[Export] public float OrthographicSize { get; set; } = 7.8f;
-	[Export] public bool GenerateHumanModelIfMissing { get; set; } = true;
-	[Export] public bool HidePlaceholderBodyVisual { get; set; } = true;
+	[Export] public bool BindOriginalHumanModel { get; set; } = true;
+	[Export] public string OriginalHumanNodePrefix { get; set; } = "Character_";
 
 	private Node3D _head = null!;
 	private Camera3D _camera = null!;
@@ -28,7 +28,7 @@ public partial class WalkExplorer : CharacterBody3D
 		_head = GetNode<Node3D>("Head");
 		_camera = GetNode<Camera3D>("Head/Camera3D");
 		_gravity = (float)ProjectSettings.GetSetting("physics/3d/default_gravity").AsDouble();
-		EnsureMovableHumanModel();
+		BindExistingHumanModelToPlayer();
 
 		_camera.Current = true;
 		_sceneCameraTransform = _camera.GlobalTransform;
@@ -49,49 +49,55 @@ public partial class WalkExplorer : CharacterBody3D
 		UpdateModeLabel();
 	}
 
-	private void EnsureMovableHumanModel()
+	private void BindExistingHumanModelToPlayer()
 	{
-		if (HidePlaceholderBodyVisual && GetNodeOrNull<Node3D>("BodyVisual") is Node3D placeholderBody)
-		{
-			placeholderBody.Visible = false;
-		}
-
-		if (!GenerateHumanModelIfMissing || GetNodeOrNull<Node3D>("PlayerHumanModel") != null)
+		if (!BindOriginalHumanModel || GetNodeOrNull<Node3D>("OriginalHumanModel") != null)
 		{
 			return;
 		}
 
-		var modelRoot = new Node3D { Name = "PlayerHumanModel" };
-		AddChild(modelRoot);
+		var modelParts = new System.Collections.Generic.List<Node3D>();
+		CollectOriginalHumanParts(GetParent(), modelParts);
+		if (modelParts.Count == 0)
+		{
+			GD.PushWarning($"No original human model parts found with prefix '{OriginalHumanNodePrefix}'.");
+			return;
+		}
 
-		AddMeshPart(modelRoot, "CoatBody", new CapsuleMesh { Radius = 0.28f, Height = 1.12f }, new Vector3(0, 0.02f, 0), new Color(0.055f, 0.12f, 0.19f));
-		AddMeshPart(modelRoot, "Head", new SphereMesh { Radius = 0.23f, Height = 0.46f, RadialSegments = 16, Rings = 8 }, new Vector3(0, 0.82f, -0.02f), new Color(0.58f, 0.48f, 0.39f));
-		AddMeshPart(modelRoot, "HairCap", new SphereMesh { Radius = 0.235f, Height = 0.24f, RadialSegments = 16, Rings = 4 }, new Vector3(0, 0.94f, -0.03f), new Color(0.08f, 0.075f, 0.07f));
-		AddMeshPart(modelRoot, "Backpack", new BoxMesh { Size = new Vector3(0.42f, 0.68f, 0.16f) }, new Vector3(0, 0.08f, 0.31f), new Color(0.04f, 0.06f, 0.085f));
-		AddMeshPart(modelRoot, "LeftArm", new CapsuleMesh { Radius = 0.075f, Height = 0.82f }, new Vector3(-0.36f, 0.02f, 0.02f), new Color(0.05f, 0.11f, 0.17f), new Vector3(0, 0, -7));
-		AddMeshPart(modelRoot, "RightArm", new CapsuleMesh { Radius = 0.075f, Height = 0.82f }, new Vector3(0.36f, 0.02f, 0.02f), new Color(0.05f, 0.11f, 0.17f), new Vector3(0, 0, 7));
-		AddMeshPart(modelRoot, "LeftFoot", new BoxMesh { Size = new Vector3(0.18f, 0.11f, 0.36f) }, new Vector3(-0.14f, -0.78f, -0.08f), new Color(0.12f, 0.1f, 0.075f));
-		AddMeshPart(modelRoot, "RightFoot", new BoxMesh { Size = new Vector3(0.18f, 0.11f, 0.36f) }, new Vector3(0.14f, -0.78f, -0.08f), new Color(0.12f, 0.1f, 0.075f));
+		Vector3 averagePosition = Vector3.Zero;
+		foreach (Node3D part in modelParts)
+		{
+			averagePosition += part.GlobalPosition;
+		}
+		averagePosition /= modelParts.Count;
+		GlobalPosition = new Vector3(averagePosition.X, GlobalPosition.Y, averagePosition.Z);
+
+		var modelRoot = new Node3D { Name = "OriginalHumanModel" };
+		AddChild(modelRoot);
+		foreach (Node3D part in modelParts)
+		{
+			Transform3D globalTransform = part.GlobalTransform;
+			part.GetParent()?.RemoveChild(part);
+			modelRoot.AddChild(part);
+			part.GlobalTransform = globalTransform;
+		}
 	}
 
-	private static MeshInstance3D AddMeshPart(Node3D parent, string name, Mesh mesh, Vector3 position, Color color, Vector3? rotationDegrees = null)
+	private void CollectOriginalHumanParts(Node? node, System.Collections.Generic.List<Node3D> output)
 	{
-		var material = new StandardMaterial3D
+		if (node == null)
 		{
-			AlbedoColor = color,
-			Roughness = 0.86f
-		};
+			return;
+		}
 
-		var instance = new MeshInstance3D
+		foreach (Node child in node.GetChildren())
 		{
-			Name = name,
-			Mesh = mesh,
-			MaterialOverride = material,
-			Position = position,
-			RotationDegrees = rotationDegrees ?? Vector3.Zero
-		};
-		parent.AddChild(instance);
-		return instance;
+			if (child is Node3D node3D && child.Name.ToString().StartsWith(OriginalHumanNodePrefix))
+			{
+				output.Add(node3D);
+			}
+			CollectOriginalHumanParts(child, output);
+		}
 	}
 
 	public override void _ExitTree()

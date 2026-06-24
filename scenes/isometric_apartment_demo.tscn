@@ -5,14 +5,6 @@
 [ext_resource type="Shader" uid="uid://d2si0mwxl5ja8" path="res://shaders/painterly_screen.gdshader" id="3_painterly"]
 [ext_resource type="Script" uid="uid://bk37kbcxagxar" path="res://scripts/WalkExplorer.cs" id="4_explorer"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial_explorer"]
-albedo_color = Color(0.06, 0.09, 0.14, 1)
-roughness = 0.82
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_explorer"]
-radius = 0.28
-height = 1.35
-
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_explorer"]
 radius = 0.3
 height = 1.8
@@ -48,12 +40,9 @@ script = ExtResource("2_script")
 [node name="Explorer" type="CharacterBody3D" parent="." unique_id=1572116653]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1, 0.2)
 script = ExtResource("4_explorer")
+BindOriginalHumanModel = true
+OriginalHumanNodePrefix = "Character_"
 CameraFollowSpeed = 10.0
-
-[node name="BodyVisual" type="MeshInstance3D" parent="Explorer" unique_id=1091691824]
-visible = false
-material_override = SubResource("StandardMaterial_explorer")
-mesh = SubResource("CapsuleMesh_explorer")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Explorer" unique_id=368960005]
 shape = SubResource("CapsuleShape_explorer")
@@ -111,6 +100,7 @@ shadow_enabled = true
 omni_range = 2.0
 
 [node name="WalkableFloors" type="Node3D" parent="." unique_id=532032391]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04250455, -0.008728266)
 
 [node name="MainFloor" type="StaticBody3D" parent="WalkableFloors" unique_id=974709117]
 
