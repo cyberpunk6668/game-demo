@@ -17,6 +17,10 @@ public partial class WalkExplorer : CharacterBody3D
 	[Export] public float OrthographicSize { get; set; } = 7.8f;
 	[Export] public bool BindOriginalHumanModel { get; set; } = true;
 	[Export] public string OriginalHumanNodePrefix { get; set; } = "Character_";
+	[Export] public float TurnSpeedDegrees { get; set; } = 420.0f;
+	[Export] public float TurnLeanDegrees { get; set; } = 6.0f;
+	[Export] public float WalkBobAmplitude { get; set; } = 0.035f;
+	[Export] public float WalkBobSpeed { get; set; } = 9.0f;
 
 	private Node3D _head = null!;
 	private Camera3D _camera = null!;
@@ -24,6 +28,9 @@ public partial class WalkExplorer : CharacterBody3D
 	private Node3D? _originalHumanModel;
 	private bool _flyMode;
 	private float _gravity;
+	private float _turnLean;
+	private float _walkCycle;
+	private bool _isMoving;
 
 	public override void _Ready()
 	{
@@ -155,6 +162,8 @@ public partial class WalkExplorer : CharacterBody3D
 		{
 			UpdateCamera((float)delta);
 		}
+
+		AnimateOriginalHumanModel((float)delta);
 	}
 
 	private Vector3 GetCameraRelativeDirection(Vector2 input2D)
@@ -193,7 +202,8 @@ public partial class WalkExplorer : CharacterBody3D
 
 		Velocity = velocity;
 		MoveAndSlide();
-		FaceMovementDirection(direction);
+		SmoothFaceMovementDirection(direction, delta);
+		_isMoving = direction.LengthSquared() > 0.001f;
 	}
 
 	private void ProcessFlying(Vector3 direction)
@@ -212,17 +222,56 @@ public partial class WalkExplorer : CharacterBody3D
 		Vector3 motion = direction + Vector3.Up * vertical;
 		Velocity = motion.LengthSquared() > 0.0f ? motion.Normalized() * speed : Vector3.Zero;
 		MoveAndSlide();
-		FaceMovementDirection(direction);
+		SmoothFaceMovementDirection(direction, (float)GetPhysicsProcessDeltaTime());
+		_isMoving = motion.LengthSquared() > 0.001f;
 	}
 
-	private void FaceMovementDirection(Vector3 direction)
+	private void SmoothFaceMovementDirection(Vector3 direction, float delta)
 	{
 		if (direction.LengthSquared() <= 0.001f)
+		{
+			_turnLean = Mathf.MoveToward(_turnLean, 0.0f, delta * 8.0f);
+			return;
+		}
+
+		Vector3 currentForward = -GlobalTransform.Basis.Z;
+		currentForward.Y = 0.0f;
+		currentForward = currentForward.Normalized();
+
+		Vector3 targetForward = direction;
+		targetForward.Y = 0.0f;
+		targetForward = targetForward.Normalized();
+
+		float signedAngle = Mathf.Atan2(currentForward.Cross(targetForward).Y, currentForward.Dot(targetForward));
+		float maxStep = Mathf.DegToRad(TurnSpeedDegrees) * delta;
+		float step = Mathf.Clamp(signedAngle, -maxStep, maxStep);
+		RotateY(step);
+
+		float targetLean = Mathf.Clamp(signedAngle / Mathf.DegToRad(90.0f), -1.0f, 1.0f);
+		_turnLean = Mathf.Lerp(_turnLean, targetLean, 1.0f - Mathf.Exp(-10.0f * delta));
+	}
+
+	private void AnimateOriginalHumanModel(float delta)
+	{
+		if (_originalHumanModel == null)
 		{
 			return;
 		}
 
-		LookAt(GlobalPosition + direction, Vector3.Up);
+		if (_isMoving)
+		{
+			_walkCycle += delta * WalkBobSpeed;
+		}
+		else
+		{
+			_walkCycle = Mathf.Lerp(_walkCycle, 0.0f, 1.0f - Mathf.Exp(-6.0f * delta));
+		}
+
+		float bob = _isMoving ? Mathf.Sin(_walkCycle) * WalkBobAmplitude : 0.0f;
+		float leanRadians = Mathf.DegToRad(TurnLeanDegrees) * _turnLean;
+
+		_originalHumanModel.Position = new Vector3(0.0f, bob, 0.0f);
+		_originalHumanModel.Rotation = new Vector3(0.0f, 0.0f, -leanRadians);
 	}
 
 	private void UpdateModeLabel()
