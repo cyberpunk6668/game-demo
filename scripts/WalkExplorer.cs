@@ -21,21 +21,9 @@ public partial class WalkExplorer : CharacterBody3D
 	private Node3D _head = null!;
 	private Camera3D _camera = null!;
 	private Transform3D _sceneCameraTransform;
-	private readonly List<HumanModelBinding> _humanModelBindings = new();
+	private Node3D? _originalHumanModel;
 	private bool _flyMode;
 	private float _gravity;
-
-	private readonly struct HumanModelBinding
-	{
-		public HumanModelBinding(Node3D part, Transform3D localTransform)
-		{
-			Part = part;
-			LocalTransform = localTransform;
-		}
-
-		public Node3D Part { get; }
-		public Transform3D LocalTransform { get; }
-	}
 
 	public override void _Ready()
 	{
@@ -65,7 +53,7 @@ public partial class WalkExplorer : CharacterBody3D
 
 	private void BindExistingHumanModelToPlayer()
 	{
-		if (!BindOriginalHumanModel || _humanModelBindings.Count > 0)
+		if (!BindOriginalHumanModel || _originalHumanModel != null || GetNodeOrNull<Node3D>("OriginalHumanModel") != null)
 		{
 			return;
 		}
@@ -86,14 +74,19 @@ public partial class WalkExplorer : CharacterBody3D
 		averagePosition /= modelParts.Count;
 		GlobalPosition = new Vector3(averagePosition.X, GlobalPosition.Y, averagePosition.Z);
 
-		Transform3D explorerInverse = GlobalTransform.AffineInverse();
+		var modelRoot = new Node3D { Name = "OriginalHumanModel" };
+		AddChild(modelRoot);
+
 		foreach (Node3D part in modelParts)
 		{
-			_humanModelBindings.Add(new HumanModelBinding(part, explorerInverse * part.GlobalTransform));
+			Transform3D originalGlobalTransform = part.GlobalTransform;
+			part.GetParent()?.RemoveChild(part);
+			modelRoot.AddChild(part);
+			part.GlobalTransform = originalGlobalTransform;
 		}
 
-		UpdateBoundHumanModel();
-		GD.Print($"Bound {_humanModelBindings.Count} original human model parts to Explorer movement.");
+		_originalHumanModel = modelRoot;
+		GD.Print($"Combined {modelParts.Count} original human model parts under Explorer/OriginalHumanModel. WASD now moves the original model with the player body.");
 	}
 
 	private void CollectOriginalHumanParts(Node? node, List<Node3D> output)
@@ -110,14 +103,6 @@ public partial class WalkExplorer : CharacterBody3D
 				output.Add(node3D);
 			}
 			CollectOriginalHumanParts(child, output);
-		}
-	}
-
-	private void UpdateBoundHumanModel()
-	{
-		foreach (HumanModelBinding binding in _humanModelBindings)
-		{
-			binding.Part.GlobalTransform = GlobalTransform * binding.LocalTransform;
 		}
 	}
 
@@ -170,8 +155,6 @@ public partial class WalkExplorer : CharacterBody3D
 		{
 			UpdateCamera((float)delta);
 		}
-
-		UpdateBoundHumanModel();
 	}
 
 	private Vector3 GetCameraRelativeDirection(Vector2 input2D)
