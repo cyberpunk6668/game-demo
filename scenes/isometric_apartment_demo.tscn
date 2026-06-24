@@ -1,9 +1,9 @@
 [gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/isometric_apartment.glb" id="1_apartment"]
-[ext_resource type="Script" path="res://scripts/room_demo.gd" id="2_script"]
+[ext_resource type="Script" path="res://scripts/RoomDemo.cs" id="2_script"]
 [ext_resource type="Shader" path="res://shaders/painterly_screen.gdshader" id="3_painterly"]
-[ext_resource type="Script" path="res://scripts/walk_explorer.gd" id="4_explorer"]
+[ext_resource type="Script" path="res://scripts/WalkExplorer.cs" id="4_explorer"]
 
 [sub_resource type="Environment" id="Environment_apartment"]
 background_mode = 1

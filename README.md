@@ -3,6 +3,12 @@
 A standalone Godot 4.7 project containing the hand-painted isometric apartment
 room, editable Blender source, and first-person exploration controls.
 
+The original scene tree is preserved. Runtime behavior is implemented with C#
+scripts:
+
+- `scripts/RoomDemo.cs` replaces the previous room-level GDScript.
+- `scripts/WalkExplorer.cs` replaces the previous first-person controller GDScript.
+
 ## Open the room
 
 1. Open the repository in Godot 4.7 Mono.
