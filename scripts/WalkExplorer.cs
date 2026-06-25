@@ -8,6 +8,8 @@ public partial class WalkExplorer : CharacterBody3D
 	[Export] public float JumpVelocity { get; set; } = 4.3f;
 	[Export] public float FlySpeed { get; set; } = 7.0f;
 	[Export] public float FlyFastSpeed { get; set; } = 16.0f;
+	[Export] public bool UseFirstPersonMouseLook { get; set; } = false;
+	[Export] public float MouseSensitivity { get; set; } = 0.0022f;
 	[Export] public bool UseSceneCameraTransform { get; set; } = true;
 	[Export] public bool FixedRoomCamera { get; set; } = true;
 	[Export] public Vector3 RoomViewCenter { get; set; } = new(0.9f, 0.75f, -0.45f);
@@ -15,6 +17,15 @@ public partial class WalkExplorer : CharacterBody3D
 	[Export] public Vector3 CameraLookAtOffset { get; set; } = new(0.0f, 0.85f, -0.25f);
 	[Export] public float CameraFollowSpeed { get; set; } = 8.0f;
 	[Export] public float OrthographicSize { get; set; } = 7.8f;
+	[Export] public bool EnableCameraOrbit { get; set; } = false;
+	[Export] public float CameraOrbitSensitivity { get; set; } = 0.22f;
+	[Export] public float CameraMinPitchDegrees { get; set; } = 22.0f;
+	[Export] public float CameraMaxPitchDegrees { get; set; } = 72.0f;
+	[Export] public float CameraZoomStep { get; set; } = 1.0f;
+	[Export] public float CameraMinSize { get; set; } = 8.0f;
+	[Export] public float CameraMaxSize { get; set; } = 24.0f;
+	[Export] public float MovementAcceleration { get; set; } = 100.0f;
+	[Export] public float MovementDeceleration { get; set; } = 100.0f;
 	[Export] public bool BindOriginalHumanModel { get; set; } = true;
 	[Export] public string OriginalHumanNodePrefix { get; set; } = "Character_";
 	[Export] public float TurnSpeedDegrees { get; set; } = 420.0f;
@@ -31,6 +42,12 @@ public partial class WalkExplorer : CharacterBody3D
 	private float _turnLean;
 	private float _walkCycle;
 	private bool _isMoving;
+	private bool _isOrbiting;
+	private bool _mouseCaptured;
+	private float _firstPersonPitch;
+	private float _cameraYaw;
+	private float _cameraPitch;
+	private float _cameraDistance;
 
 	public override void _Ready()
 	{
@@ -41,20 +58,30 @@ public partial class WalkExplorer : CharacterBody3D
 
 		_camera.Current = true;
 		_sceneCameraTransform = _camera.GlobalTransform;
-		_camera.TopLevel = true;
 
-		if (UseSceneCameraTransform)
+		if (UseFirstPersonMouseLook)
 		{
+			_camera.TopLevel = false;
+			_camera.Projection = Camera3D.ProjectionType.Perspective;
+			_camera.Position = Vector3.Zero;
+			_camera.Rotation = Vector3.Zero;
+			SetMouseCapture(true);
+		}
+		else if (UseSceneCameraTransform)
+		{
+			_camera.TopLevel = true;
 			_camera.GlobalTransform = _sceneCameraTransform;
 		}
 		else
 		{
+			_camera.TopLevel = true;
 			_camera.Set("projection", 1);
 			_camera.Set("size", OrthographicSize);
+			InitializeOrbitCamera();
 			UpdateCameraImmediate();
+			Input.MouseMode = Input.MouseModeEnum.Visible;
 		}
 
-		Input.MouseMode = Input.MouseModeEnum.Visible;
 		UpdateModeLabel();
 	}
 
@@ -120,10 +147,64 @@ public partial class WalkExplorer : CharacterBody3D
 
 	public override void _UnhandledInput(InputEvent @event)
 	{
+		if (UseFirstPersonMouseLook && @event is InputEventMouseMotion firstPersonMotion && _mouseCaptured)
+		{
+			RotateY(-firstPersonMotion.Relative.X * MouseSensitivity);
+			_firstPersonPitch = Mathf.Clamp(
+				_firstPersonPitch - firstPersonMotion.Relative.Y * MouseSensitivity,
+				Mathf.DegToRad(-88.0f),
+				Mathf.DegToRad(88.0f)
+			);
+			_head.Rotation = new Vector3(_firstPersonPitch, 0.0f, 0.0f);
+		}
+
+		if (UseFirstPersonMouseLook && @event is InputEventMouseButton firstPersonButton
+			&& firstPersonButton.Pressed && firstPersonButton.ButtonIndex == MouseButton.Left && !_mouseCaptured)
+		{
+			SetMouseCapture(true);
+		}
+
+		if (EnableCameraOrbit && @event is InputEventMouseButton mouseButton)
+		{
+			if (mouseButton.ButtonIndex == MouseButton.Right)
+			{
+				_isOrbiting = mouseButton.Pressed;
+				Input.MouseMode = _isOrbiting ? Input.MouseModeEnum.Captured : Input.MouseModeEnum.Visible;
+			}
+			else if (mouseButton.Pressed && mouseButton.ButtonIndex == MouseButton.WheelUp)
+			{
+				OrthographicSize = Mathf.Max(CameraMinSize, OrthographicSize - CameraZoomStep);
+				_camera.Size = OrthographicSize;
+			}
+			else if (mouseButton.Pressed && mouseButton.ButtonIndex == MouseButton.WheelDown)
+			{
+				OrthographicSize = Mathf.Min(CameraMaxSize, OrthographicSize + CameraZoomStep);
+				_camera.Size = OrthographicSize;
+			}
+		}
+
+		if (EnableCameraOrbit && _isOrbiting && @event is InputEventMouseMotion mouseMotion)
+		{
+			_cameraYaw -= Mathf.DegToRad(mouseMotion.Relative.X * CameraOrbitSensitivity);
+			_cameraPitch = Mathf.Clamp(
+				_cameraPitch - Mathf.DegToRad(mouseMotion.Relative.Y * CameraOrbitSensitivity),
+				Mathf.DegToRad(CameraMinPitchDegrees),
+				Mathf.DegToRad(CameraMaxPitchDegrees)
+			);
+			UpdateOrbitOffset();
+		}
+
 		if (@event is InputEventKey keyEvent && keyEvent.Pressed && !keyEvent.Echo)
 		{
 			switch (keyEvent.Keycode)
 			{
+				case Key.Escape when UseFirstPersonMouseLook:
+					SetMouseCapture(!_mouseCaptured);
+					break;
+				case Key.Escape when _isOrbiting:
+					_isOrbiting = false;
+					Input.MouseMode = Input.MouseModeEnum.Visible;
+					break;
 				case Key.F11:
 					ToggleFullscreen();
 					break;
@@ -143,7 +224,9 @@ public partial class WalkExplorer : CharacterBody3D
 		input2D.Y += (Input.IsPhysicalKeyPressed(Key.S) ? 1.0f : 0.0f) - (Input.IsPhysicalKeyPressed(Key.W) ? 1.0f : 0.0f);
 		input2D = input2D.LimitLength(1.0f);
 
-		Vector3 direction = GetCameraRelativeDirection(input2D);
+		Vector3 direction = UseFirstPersonMouseLook
+			? GetBodyRelativeDirection(input2D)
+			: GetCameraRelativeDirection(input2D);
 
 		if (_flyMode){
 			ProcessFlying(direction);
@@ -151,7 +234,12 @@ public partial class WalkExplorer : CharacterBody3D
 			ProcessWalking(direction, (float)delta);
 		}
 
-		if (UseSceneCameraTransform){
+		if (UseFirstPersonMouseLook)
+		{
+			// The camera stays at the player's head and follows mouse look directly.
+		}
+		else if (UseSceneCameraTransform)
+		{
 			_camera.GlobalTransform = _sceneCameraTransform;
 		}else{
 			UpdateCamera((float)delta);
@@ -180,11 +268,14 @@ public partial class WalkExplorer : CharacterBody3D
 
 	private void ProcessWalking(Vector3 direction, float delta)
 	{
-		//real walk and the and the walk 
 		float speed = Input.IsKeyPressed(Key.Shift) ? RunSpeed : WalkSpeed;
 		Vector3 velocity = Velocity;
-		velocity.X = direction.X * speed;
-		velocity.Z = direction.Z * speed;
+		Vector3 targetVelocity = direction * speed;
+		float horizontalChange = direction.LengthSquared() > 0.001f
+			? MovementAcceleration * delta
+			: MovementDeceleration * delta;
+		velocity.X = Mathf.MoveToward(velocity.X, targetVelocity.X, horizontalChange);
+		velocity.Z = Mathf.MoveToward(velocity.Z, targetVelocity.Z, horizontalChange);
 
 		if (!IsOnFloor()){
 			velocity.Y -= _gravity * delta;
@@ -194,8 +285,23 @@ public partial class WalkExplorer : CharacterBody3D
 
 		Velocity = velocity;
 		MoveAndSlide();
-		SmoothFaceMovementDirection(direction, delta);
+		if (!UseFirstPersonMouseLook)
+		{
+			SmoothFaceMovementDirection(direction, delta);
+		}
 		_isMoving = direction.LengthSquared() > 0.001f;
+	}
+
+	private Vector3 GetBodyRelativeDirection(Vector2 input2D)
+	{
+		if (input2D == Vector2.Zero)
+		{
+			return Vector3.Zero;
+		}
+
+		Vector3 direction = GlobalTransform.Basis * new Vector3(input2D.X, 0.0f, input2D.Y);
+		direction.Y = 0.0f;
+		return direction.Normalized();
 	}
 
 	private void ProcessFlying(Vector3 direction)
@@ -212,7 +318,10 @@ public partial class WalkExplorer : CharacterBody3D
 		Vector3 motion = direction + Vector3.Up * vertical;
 		Velocity = motion.LengthSquared() > 0.0f ? motion.Normalized() * speed : Vector3.Zero;
 		MoveAndSlide();
-		SmoothFaceMovementDirection(direction, (float)GetPhysicsProcessDeltaTime());
+		if (!UseFirstPersonMouseLook)
+		{
+			SmoothFaceMovementDirection(direction, (float)GetPhysicsProcessDeltaTime());
+		}
 		_isMoving = motion.LengthSquared() > 0.001f;
 	}
 
@@ -267,11 +376,34 @@ public partial class WalkExplorer : CharacterBody3D
 		}
 	}
 
+	private void SetMouseCapture(bool captured)
+	{
+		_mouseCaptured = captured;
+		Input.MouseMode = captured ? Input.MouseModeEnum.Captured : Input.MouseModeEnum.Visible;
+	}
+
 	private void UpdateCameraImmediate()
 	{
 		Vector3 target = GetCameraTarget();
 		_camera.GlobalPosition = target + CameraOffset;
 		_camera.LookAt(target, Vector3.Up);
+	}
+
+	private void InitializeOrbitCamera()
+	{
+		_cameraDistance = Mathf.Max(CameraOffset.Length(), 0.1f);
+		_cameraYaw = Mathf.Atan2(CameraOffset.X, CameraOffset.Z);
+		_cameraPitch = Mathf.Asin(Mathf.Clamp(CameraOffset.Y / _cameraDistance, -1.0f, 1.0f));
+	}
+
+	private void UpdateOrbitOffset()
+	{
+		float horizontalDistance = Mathf.Cos(_cameraPitch) * _cameraDistance;
+		CameraOffset = new Vector3(
+			Mathf.Sin(_cameraYaw) * horizontalDistance,
+			Mathf.Sin(_cameraPitch) * _cameraDistance,
+			Mathf.Cos(_cameraYaw) * horizontalDistance
+		);
 	}
 
 	private void UpdateCamera(float delta)
