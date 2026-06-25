@@ -1,9 +1,13 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/train_station/train_station.glb" id="1_station"]
 [ext_resource type="Script" path="res://scripts/TrainStationDemo.cs" id="2_scene"]
-[ext_resource type="Script" path="res://scripts/WalkExplorer.cs" id="3_explorer"]
+[ext_resource type="Script" path="res://scripts/ThirdPersonController.cs" id="3_explorer"]
 [ext_resource type="Shader" path="res://shaders/painterly_screen.gdshader" id="4_painterly"]
+[ext_resource type="PackedScene" path="res://assets/characters/quaternius_ual/UAL1_Standard.glb" id="5_character"]
+[ext_resource type="Script" path="res://scripts/StationCollisionBuilder.cs" id="6_collision_builder"]
+[ext_resource type="PackedScene" path="res://girls/testchar1.vrm" id="7_vroid"]
+[ext_resource type="Script" path="res://scripts/HumanoidPoseRetargeter.cs" id="8_retargeter"]
 
 [sub_resource type="Environment" id="Environment_station"]
 background_mode = 1
@@ -23,6 +27,12 @@ size = Vector3(8, 1.05, 50)
 [sub_resource type="BoxShape3D" id="BoxShape_upper"]
 size = Vector3(15, 1.1, 35)
 
+[sub_resource type="BoxShape3D" id="BoxShape_world_ground"]
+size = Vector3(44, 1, 60)
+
+[sub_resource type="BoxShape3D" id="BoxShape_track_bed"]
+size = Vector3(3.5, 0.5, 58)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_painterly"]
 shader = ExtResource("4_painterly")
 shader_parameter/color_steps = 32.0
@@ -34,27 +44,40 @@ script = ExtResource("2_scene")
 
 [node name="Station" parent="." instance=ExtResource("1_station")]
 
+[node name="StationCollisionBuilder" type="Node3D" parent="."]
+script = ExtResource("6_collision_builder")
+
 [node name="Explorer" type="CharacterBody3D" parent="."]
 position = Vector3(0.2, 2.0, 18)
 script = ExtResource("3_explorer")
-UseSceneCameraTransform = false
-FixedRoomCamera = false
-CameraOffset = Vector3(9, 12, 10)
-CameraLookAtOffset = Vector3(0, 0.9, 0)
-CameraFollowSpeed = 7.0
-OrthographicSize = 17.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Explorer"]
 shape = SubResource("CapsuleShape_explorer")
 
-[node name="Head" type="Node3D" parent="Explorer"]
-position = Vector3(0, 0.65, 0)
+[node name="Visual" type="Node3D" parent="Explorer"]
+position = Vector3(0, -0.9, 0)
 
-[node name="Camera3D" type="Camera3D" parent="Explorer/Head"]
-projection = 1
+[node name="Avatar" parent="Explorer/Visual" instance=ExtResource("7_vroid")]
+scale = Vector3(1.148, 1.148, 1.148)
+
+[node name="AnimationSource" parent="Explorer/Visual" instance=ExtResource("5_character")]
+visible = false
+
+[node name="HumanoidPoseRetargeter" type="Node" parent="Explorer/Visual"]
+script = ExtResource("8_retargeter")
+
+[node name="CameraYaw" type="Node3D" parent="Explorer"]
+position = Vector3(0, 0.7, 0)
+
+[node name="CameraPitch" type="Node3D" parent="Explorer/CameraYaw"]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="Explorer/CameraYaw/CameraPitch"]
+spring_length = 4.6
+margin = 0.2
+
+[node name="Camera3D" type="Camera3D" parent="Explorer/CameraYaw/CameraPitch/SpringArm3D"]
 current = true
 fov = 68.0
-size = 17.0
 near = 0.05
 far = 300.0
 
@@ -105,6 +128,30 @@ position = Vector3(11.5, 0.55, -11.5)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableSurfaces/UpperGround"]
 shape = SubResource("BoxShape_upper")
 
+[node name="WorldGround" type="StaticBody3D" parent="WalkableSurfaces"]
+position = Vector3(0, -1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableSurfaces/WorldGround"]
+shape = SubResource("BoxShape_world_ground")
+
+[node name="TrackBed0" type="StaticBody3D" parent="WalkableSurfaces"]
+position = Vector3(-12, 0.15, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableSurfaces/TrackBed0"]
+shape = SubResource("BoxShape_track_bed")
+
+[node name="TrackBed1" type="StaticBody3D" parent="WalkableSurfaces"]
+position = Vector3(-8.1, 0.15, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableSurfaces/TrackBed1"]
+shape = SubResource("BoxShape_track_bed")
+
+[node name="TrackBed2" type="StaticBody3D" parent="WalkableSurfaces"]
+position = Vector3(-4.2, 0.15, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WalkableSurfaces/TrackBed2"]
+shape = SubResource("BoxShape_track_bed")
+
 [node name="Interface" type="CanvasLayer" parent="."]
 
 [node name="PainterlyScreen" type="ColorRect" parent="Interface"]
@@ -120,7 +167,7 @@ mouse_filter = 2
 offset_left = 18.0
 offset_top = 18.0
 offset_right = 335.0
-offset_bottom = 160.0
+offset_bottom = 192.0
 color = Color(0.015, 0.018, 0.024, 0.82)
 
 [node name="HelpText" type="Label" parent="Interface/HelpPanel"]
@@ -131,23 +178,23 @@ offset_bottom = 135.0
 theme_override_colors/font_color = Color(0.92, 0.9, 0.82, 1)
 theme_override_font_sizes/font_size = 17
 text = "STATION EXPLORATION
-W A S D   Move       Camera follows
-Space     Jump       Shift   Run
-F         Walk / Fly Mode
-Fly: Space / E Up, Q / Ctrl Down
-F11       Toggle Fullscreen
+W A S D   Move       Space   Jump
+Mouse     Orbit Camera
+Shift     Sprint     Alt     Walk
+Esc       Release Mouse
 Explore the platform and station buildings"
 
 [node name="ModeLabel" type="Label" parent="Interface"]
 offset_left = 18.0
-offset_top = 172.0
+offset_top = 204.0
 offset_right = 180.0
-offset_bottom = 208.0
+offset_bottom = 240.0
 theme_override_colors/font_color = Color(1, 0.84, 0.45, 1)
 theme_override_font_sizes/font_size = 18
-text = "MODE: WALK"
+text = "THIRD-PERSON MODE"
 
 [node name="Crosshair" type="Label" parent="Interface"]
+visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
