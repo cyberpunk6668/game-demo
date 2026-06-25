@@ -145,21 +145,15 @@ public partial class WalkExplorer : CharacterBody3D
 
 		Vector3 direction = GetCameraRelativeDirection(input2D);
 
-		if (_flyMode)
-		{
+		if (_flyMode){
 			ProcessFlying(direction);
-		}
-		else
-		{
+		}else{
 			ProcessWalking(direction, (float)delta);
 		}
 
-		if (UseSceneCameraTransform)
-		{
+		if (UseSceneCameraTransform){
 			_camera.GlobalTransform = _sceneCameraTransform;
-		}
-		else
-		{
+		}else{
 			UpdateCamera((float)delta);
 		}
 
@@ -192,12 +186,9 @@ public partial class WalkExplorer : CharacterBody3D
 		velocity.X = direction.X * speed;
 		velocity.Z = direction.Z * speed;
 
-		if (!IsOnFloor())
-		{
+		if (!IsOnFloor()){
 			velocity.Y -= _gravity * delta;
-		}
-		else if (Input.IsKeyPressed(Key.Space))
-		{
+		}else if (Input.IsKeyPressed(Key.Space)){
 			velocity.Y = JumpVelocity;
 		}
 
@@ -210,12 +201,10 @@ public partial class WalkExplorer : CharacterBody3D
 	private void ProcessFlying(Vector3 direction)
 	{
 		float vertical = 0.0f;
-		if (Input.IsKeyPressed(Key.Space) || Input.IsKeyPressed(Key.E))
-		{
+		if (Input.IsKeyPressed(Key.Space) || Input.IsKeyPressed(Key.E)){
 			vertical += 1.0f;
 		}
-		if (Input.IsKeyPressed(Key.Q) || Input.IsKeyPressed(Key.Ctrl))
-		{
+		if (Input.IsKeyPressed(Key.Q) || Input.IsKeyPressed(Key.Ctrl)){
 			vertical -= 1.0f;
 		}
 
@@ -229,8 +218,7 @@ public partial class WalkExplorer : CharacterBody3D
 
 	private void SmoothFaceMovementDirection(Vector3 direction, float delta)
 	{
-		if (direction.LengthSquared() <= 0.001f)
-		{
+		if (direction.LengthSquared() <= 0.001f){
 			_turnLean = Mathf.MoveToward(_turnLean, 0.0f, delta * 8.0f);
 			return;
 		}
@@ -254,17 +242,14 @@ public partial class WalkExplorer : CharacterBody3D
 
 	private void AnimateOriginalHumanModel(float delta)
 	{
-		if (_originalHumanModel == null)
-		{
+		if (_originalHumanModel == null){
 			return;
 		}
 
-		if (_isMoving)
-		{
+		if (_isMoving){
 			_walkCycle += delta * WalkBobSpeed;
 		}
-		else
-		{
+		else{
 			_walkCycle = Mathf.Lerp(_walkCycle, 0.0f, 1.0f - Mathf.Exp(-6.0f * delta));
 		}
 
@@ -277,8 +262,7 @@ public partial class WalkExplorer : CharacterBody3D
 
 	private void UpdateModeLabel()
 	{
-		if (GetNodeOrNull<Label>("../Interface/ModeLabel") is Label label)
-		{
+		if (GetNodeOrNull<Label>("../Interface/ModeLabel") is Label label){
 			label.Text = _flyMode ? "MODE: ISO FLY" : "MODE: ISO WALK";
 		}
 	}
